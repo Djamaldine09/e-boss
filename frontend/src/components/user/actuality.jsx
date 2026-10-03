@@ -9,7 +9,6 @@ import ImageUpload from '../ImageUpload';
 import API from '../../services/api';
 import DashboardNavbar from './dashboard-navbar';
 import Sidebar from './sidebar';
-import Footer from '../../components/footer';
 
 const Actualite = () => {
   const { theme } = useTheme();
@@ -842,8 +841,6 @@ const Actualite = () => {
           </div>
         </div>
       </div>
-      
-      <Footer />
     </div>
   );
 };
