@@ -6,7 +6,6 @@ import { useTheme } from '../../context/theme-context';
 const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   const { theme, toggleTheme } = useTheme();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const notifications = [
@@ -14,12 +13,6 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
     { id: 2, title: 'Rappel de Sprint', description: 'Sprint #3 commence demain', time: 'Il y a 1h', read: false },
     { id: 3, title: 'Succès débloqué', description: 'Vous avez débloqué "Expert React"', time: 'Il y a 3h', read: true },
     { id: 4, title: 'Message de votre mentor', description: 'Révision de votre dernier projet', time: 'Il y a 5h', read: true }
-  ];
-
-  const messages = [
-    { id: 1, sender: 'Marie Dubois', subject: 'Question sur le Sprint 2', preview: 'Bonjour, j\'ai une question...', time: '10:30', unread: true },
-    { id: 2, sender: 'System', subject: 'Rappel de cours', preview: 'N\'oubliez pas votre cours...', time: '09:15', unread: true },
-    { id: 3, sender: 'Thomas Martin', subject: 'Projet collaboratif', preview: 'Veux-tu rejoindre notre...', time: 'Hier', unread: false }
   ];
 
   const userMenu = [
@@ -113,79 +106,6 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
             </svg>
           </Link>
-
-          {/* Bouton Messages */}
-          <div className="relative">
-            <button
-              onClick={() => setIsMessagesOpen(!isMessagesOpen)}
-              className={`relative p-2 rounded-xl transition-all hover:scale-105 ${
-                theme === 'dark' 
-                  ? 'text-gray-300 hover:text-white hover:bg-gray-800' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-              </svg>
-              {messages.filter(m => m.unread).length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                  {messages.filter(m => m.unread).length}
-                </span>
-              )}
-            </button>
-
-            {/* Dropdown Messages */}
-            <AnimatePresence>
-              {isMessagesOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  className={`absolute right-0 mt-2 w-80 rounded-2xl shadow-2xl border max-h-96 overflow-hidden ${
-                theme === 'dark' 
-                  ? 'bg-gray-800/98 border-gray-700' 
-                  : 'bg-white/95 border-gray-300'
-              }`}
-                >
-                  <div className="p-4 border-b border-white/10">
-                    <div className="flex items-center justify-between">
-                      <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        Messages
-                      </h3>
-                      <Link to="/dashboard/messages" className="text-blue-500 text-sm hover:underline">
-                        Voir tout
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${
-                          message.unread ? 'bg-blue-500/10' : ''
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-1">
-                          <div className={`font-medium text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                            {message.sender}
-                          </div>
-                          <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {message.time}
-                          </div>
-                        </div>
-                        <div className={`text-sm font-medium mb-1 ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>
-                          {message.subject}
-                        </div>
-                        <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} truncate`}>
-                          {message.preview}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
           {/* Bouton Notifications */}
           <div className="relative">
