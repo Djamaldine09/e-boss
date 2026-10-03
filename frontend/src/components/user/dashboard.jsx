@@ -125,7 +125,7 @@ const Dashboard = () => {
 
     // Vue d'aperçu (par défaut)
     return (
-      <div className="h-[calc(100vh-8rem)] flex flex-col">
+      <div className="min-h-[calc(100vh-8rem)] flex flex-col">
         {/* En-tête avec statistiques et timer */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
           <QuickStats />
@@ -135,14 +135,14 @@ const Dashboard = () => {
         </div>
 
         {/* Grille principale */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-4 lg:gap-6 flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6 items-start">
           {/* Colonne de gauche - Mes Cours */}
-          <div className="xl:col-span-2 lg:col-span-1 flex flex-col h-full">
-            <div className="glass p-4 sm:p-6 flex-1 flex flex-col overflow-hidden">
+          <div className="xl:col-span-2 lg:col-span-1 flex flex-col min-w-0">
+            <div className="glass p-4 sm:p-6 flex flex-col min-h-[420px]">
               <h2 className={`text-lg sm:text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Mes Cours
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 overflow-y-auto flex-1 pr-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4 pr-2">
                 {courses.map((course) => (
                   <ProgressCard 
                     key={course.id} 
@@ -160,12 +160,12 @@ const Dashboard = () => {
           </div>
 
           {/* Colonne de droite - Activité récente */}
-          <div className="flex flex-col space-y-4 lg:space-y-6 h-full">
-            <div className="glass p-4 sm:p-6 flex-1">
+          <div className="flex flex-col space-y-4 lg:space-y-6 min-w-0">
+            <div className="glass p-4 sm:p-6 min-h-[320px] flex flex-col">
               <h2 className={`text-lg sm:text-xl font-bold mb-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                 Activité récente
               </h2>
-              <div className="h-[calc(100%-2.5rem)] overflow-y-auto pr-2">
+              <div className="min-h-0 flex-1 overflow-y-auto pr-2">
                 <RecentActivity />
               </div>
             </div>
