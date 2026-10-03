@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import chatbotAPI from '../../services/chatbotAPI';
 
 const FloatingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,38 +16,17 @@ const FloatingChatbot = () => {
     setIsLoading(true);
 
     try {
-      // Appeler l'API Python du chatbot
-      const response = await fetch('http://localhost:5000/api/chatbot/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message,
-          user_id: 'user_' + Date.now(),
-          context: 'react_express_learning'
-        })
-      });
+      const data = await chatbotAPI.chat(
+        message,
+        'user_' + Date.now(),
+        'react_express_learning'
+      );
 
-      if (!response.ok) {
-        throw new Error('Erreur de communication avec le chatbot');
-      }
+      setMessages(prev => [...prev, {
+        text: data.text || data.response || data.message || 'Désolé, je n\'ai pas pu traiter votre demande.',
+        sender: 'bot'
+      }]);
 
-      const data = await response.json();
-      
-      // Ajouter la réponse du bot
-      setMessages(prev => [...prev, { 
-        text: data.response || data.message || 'Désolé, je n\'ai pas pu traiter votre demande.', 
-        sender: 'bot' 
-      }]);
-      
-    } catch (error) {
-      console.error('Erreur chatbot:', error);
-      // Message d'erreur si le backend n'est pas accessible
-      setMessages(prev => [...prev, { 
-        text: 'Désolé, le service de chatbot n\'est pas disponible. Assurez-vous que le backend Python est démarré sur localhost:5000', 
-        sender: 'bot' 
-      }]);
     } finally {
       setIsLoading(false);
     }
