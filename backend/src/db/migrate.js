@@ -34,10 +34,17 @@ async function runMigrations() {
       const migrationPath = path.join(migrationsDir, file);
       const migrationSQL = await fs.readFile(migrationPath, 'utf8');
 
-      const statements = migrationSQL
+      // Remove SQL line comments before splitting statements.
+      // Previously, a CREATE TABLE preceded by a comment was discarded
+      // because the whole statement started with "--", so no tables were created.
+      const cleanedSQL = migrationSQL
+        .replace(/^\s*--.*$/gm, '')
+        .trim();
+
+      const statements = cleanedSQL
         .split(';')
         .map((stmt) => stmt.trim())
-        .filter((stmt) => stmt.length > 0 && !stmt.startsWith('--'));
+        .filter((stmt) => stmt.length > 0);
 
       for (const statement of statements) {
         try {
