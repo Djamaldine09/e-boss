@@ -7,6 +7,13 @@ import Sidebar from './sidebar';
 import Footer from '../footer';
 import profileAPI from '../../services/profileAPI';
 
+const BACKEND_BASE_URL = (import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '');
+const getProfilePhotoUrl = (photoPath) => {
+  if (!photoPath) return '';
+  if (/^https?:\/\//i.test(photoPath)) return photoPath;
+  return `${BACKEND_BASE_URL}${photoPath.startsWith('/') ? photoPath : `/${photoPath}`}`;
+};
+
 const Profile = ({ standalone = false }) => {
   const { theme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -261,7 +268,7 @@ const Profile = ({ standalone = false }) => {
                     <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-xl overflow-hidden">
                       {profileData.profile_photo ? (
                         <img 
-                          src={`http://localhost:3000${profileData.profile_photo}`} 
+                          src={getProfilePhotoUrl(profileData.profile_photo)} 
                           alt="Photo de profil"
                           className="w-full h-full object-cover"
                         />
