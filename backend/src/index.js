@@ -16,6 +16,7 @@ const profileRoutes = require('./routes/profile');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const PUBLIC_BACKEND_URL = (process.env.BACKEND_PUBLIC_URL || 'https://e-boss-backend.onrender.com').replace(/\/+$/, '');
 
 // Middleware
 app.use(cors());
@@ -73,7 +74,7 @@ app.post('/api/upload', upload.array('images', 5), (req, res) => {
     }
 
     const urls = req.files.map(file => ({
-      url: `http://localhost:3001/uploads/${file.filename}`,
+      url: `${PUBLIC_BACKEND_URL}/uploads/${file.filename}`,
       filename: file.filename,
       originalname: file.originalname,
       size: file.size
