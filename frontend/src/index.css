@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Poppins', sans-serif;
+}
+
+/* ---------------- LIGHT (par défaut) ---------------- */
+body {
+  background-color: rgb(224, 219, 219);
+  color: black;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-sans);
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* ---------------- DARK ---------------- */
+.dark body {
+  background-color: black;
+  color: white;
+}
+
+/* ---------------- Components ---------------- */
+.glass {
+  border-radius: 0.75rem;
+  backdrop-filter: blur(12px);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.dark .glass {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+body:not(.dark) .glass {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Button */
+.btn {
+  cursor: pointer;
+  border-radius: 9999px;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-weight: 500;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.dark .btn {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body:not(.dark) .btn {
+  color: black;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Optional hover effect for theme buttons */
+.dark .btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+body:not(.dark) .btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold 
+           hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 
+           shadow-lg hover:shadow-xl active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg font-semibold 
+           hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300;
+  }
+}
+
+/* Dans votre index.css ou globals.css */
+@keyframes fall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-10px) rotate(180deg);
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.6;
+        box-shadow: 0 0 5px currentColor;
+    }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 20px currentColor;
+    }
+}
+
+.animate-fall {
+    animation: fall 10s linear infinite;
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Dans votre index.css ou globals.css */
+
+/* Animation pour les boutons Noël */
+@keyframes button-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+  }
+}
+
+/* Animation pour les emojis de Noël */
+@keyframes float-emoji {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(10deg);
+  }
+}
+.b {
+  text-align: center;
+}
+
+/* Effets pour le mode Noël */
+.christmas-button {
+  animation: button-glow 2s ease-in-out infinite;
+
+}
+
+.christmas-emoji {
+  display: inline-block;
+  animation: float-emoji 3s ease-in-out infinite;
+}
+
+/* Bannière spéciale Noël avec effet brillant */
+@keyframes banner-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+}
+
+.special-christmas-offer {
+  animation: banner-glow 2s ease-in-out infinite;
+}

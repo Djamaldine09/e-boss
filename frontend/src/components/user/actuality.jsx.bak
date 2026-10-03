@@ -1,0 +1,409 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Bell, Plus, Send, AlertCircle, CheckCircle, X, MessageSquare, Share2, Bookmark, TrendingUp, Users, Calendar, Filter, Image as ImageIcon } from 'lucide-react';
+import { useTheme } from '../../context/theme-context';
+import { analysisAPI } from '../../services/analysisAPI';
+import { adminAPI } from '../../services/adminAPI';
+import ImageUpload from '../ImageUpload';
+import { api } from '../../services/api';
+
+const Actualite = () => {
+  const { theme } = useTheme();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [newPost, setNewPost] = useState('');
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [analyzing, setAnalyzing] = useState({});
+  const [analysisResults, setAnalysisResults] = useState({});
+
+  const [posts, setPosts] = useState([
+    {
+      id: 1,
+      author: 'Marie Dubois',
+      avatar: 'MD',
+      time: 'Il y a 2 heures',
+      content: 'Super session de codage aujourd\'hui ! J\'ai enfin réussi à implémenter le système d\'authentification avec JWT.',
+      likes: 12,
+      comments: 3,
+      liked: false,
+      image: null
+    },
+    {
+      id: 2,
+      author: 'Thomas Martin',
+      avatar: 'TM',
+      time: 'Il y a 4 heures',
+      content: 'Quelqu\'un connaît un bon tutoriel sur React Hooks ? Je bloque sur useEffect avec les API.',
+      likes: 8,
+      comments: 7,
+      liked: true,
+      image: null
+    }
+  ]);
+
+  const [postImages, setPostImages] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleImageUpload = useCallback((files) => {
+    setPostImages(files);
+  }, []);
+
+  const uploadImages = async (images) => {
+    const formData = new FormData();
+    images.forEach((file, index) => {
+      formData.append(`images`, file);
+    });
+
+    try {
+      const response = await api.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.urls;
+    } catch (err) {
+      console.error('Erreur lors du téléchargement des images:', err);
+      throw new Error('Échec du téléchargement des images');
+    }
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPost.trim() && postImages.length === 0) {
+      setError('Veuillez ajouter du texte ou une image');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      let imageUrls = [];
+      
+      // Upload des images si présentes
+      if (postImages.length > 0) {
+        imageUrls = await uploadImages(postImages);
+      }
+
+      const post = {
+        id: Date.now(),
+        author: 'Vous',
+        avatar: 'VO',
+        time: 'Maintenant',
+        content: newPost,
+        likes: 0,
+        comments: 0,
+        liked: false,
+        images: imageUrls.map(url => ({
+          url,
+          preview: url // Pour la prévisualisation immédiate
+        }))
+      };
+
+      // Ici, vous pourriez envoyer le post à votre API
+      // await api.post('/api/posts', post);
+
+      setPosts([post, ...posts]);
+      setNewPost('');
+      setPostImages([]);
+      setShowCreatePost(false);
+    } catch (err) {
+      console.error('Erreur lors de la création du post:', err);
+      setError('Une erreur est survenue lors de la création du post');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLike = (postId) => {
+    setPosts(posts.map(post => 
+      post.id === postId 
+        ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
+        : post
+    ));
+  };
+
+  const handleAnalyzePost = async (postId) => {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    setAnalyzing(prev => ({ ...prev, [postId]: true }));
+
+    try {
+      // Vérifier si le backend est accessible
+      const healthCheck = await fetch('http://localhost:5000/health');
+      if (!healthCheck.ok) {
+        throw new Error('Backend non accessible');
+      }
+
+      // Effectuer l'analyse complète
+      const analysis = await analysisAPI.fullAnalysis(post.content, postId);
+      setAnalysisResults(prev => ({ ...prev, [postId]: analysis }));
+
+      // Envoyer les données d'analyse au dashboard admin
+      try {
+        await adminAPI.sendAnalysisData(post, analysis);
+        console.log('Données d\'analyse envoyées au dashboard admin avec succès');
+        
+        // Afficher une notification de succès
+        showNotification('Post analysé avec succès !', 'success');
+      } catch (adminError) {
+        console.warn('Erreur lors de l\'envoi au dashboard admin:', adminError);
+        showNotification('Analyse effectuée mais erreur lors de l\'envoi admin', 'warning');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'analyse:', error);
+      showNotification('Erreur lors de l\'analyse du post: ' + error.message, 'error');
+    } finally {
+      setAnalyzing(prev => ({ ...prev, [postId]: false }));
+    }
+  };
+
+  const handleReportPost = async (postId) => {
+    const post = posts.find(p => p.id === postId);
+    if (!post) return;
+
+    const reason = prompt('Pourquoi signalez-vous ce post? (fake news, contenu inapproprié, spam, etc.)');
+    if (!reason) return;
+
+    try {
+      const analysisData = analysisResults[postId] || null;
+      await adminAPI.reportPost(post, reason, analysisData);
+      showNotification('Post signalé avec succès ! Les administrateurs en prendront connaissance.', 'success');
+    } catch (error) {
+      console.error('Erreur lors du signalement:', error);
+      showNotification('Erreur lors du signalement du post.', 'error');
+    }
+  };
+
+  const showNotification = (message, type = 'info') => {
+    // Créer une notification temporaire
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 ${
+      type === 'success' ? 'bg-green-500 text-white' :
+      type === 'error' ? 'bg-red-500 text-white' :
+      type === 'warning' ? 'bg-yellow-500 text-white' :
+      'bg-blue-500 text-white'
+    }`;
+    notification.innerHTML = `
+      <div class="flex items-center gap-2">
+        ${type === 'success' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' :
+          type === 'error' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>' :
+          type === 'warning' ? '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>' :
+          '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+        }
+        <span>${message}</span>
+      </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animation d'entrée
+    setTimeout(() => {
+      notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Auto-disparition après 5 secondes
+    setTimeout(() => {
+      notification.style.transform = 'translateX(400px)';
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 5000);
+  };
+
+  return (
+    <>
+      <DashboardNavbar onSidebarToggle={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
+      <div className={`pt-16 transition-all duration-300 ${sidebarOpen ? 'md:ml-72' : 'md:ml-0'}`}>
+        <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}>
+          <div className="max-w-2xl mx-auto py-6 px-4">
+            {/* Bouton créer une publication */}
+            <div className={`mb-6 p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                  VO
+                </div>
+                <button
+                  onClick={() => setShowCreatePost(!showCreatePost)}
+                  className={`flex-1 p-3 rounded-lg text-left ${
+                    theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-100 text-gray-500'
+                  }`}
+                >
+                  Quoi de neuf ?
+                </button>
+              </div>
+              
+              <AnimatePresence>
+                {showCreatePost && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex justify-between items-center pt-2">
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {postImages.length > 0 && (
+                          <span>{postImages.length} image{postImages.length > 1 ? 's' : ''} sélectionnée{postImages.length > 1 ? 's' : ''}</span>
+                        )}
+                          }`}
+                        >
+                          <svg className="w-5 h-5" fill={post.liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                          <span className="text-sm">{post.likes}</span>
+                        </button>
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}
+                >
+                  {/* Header de la publication */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold">
+                        {post.avatar}
+                      </div>
+                      <div>
+                        <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          {post.author}
+                        </h3>
+                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {post.time}
+                        </p>
+                      </div>
+                    </div>
+                    <button className={`p-2 rounded-lg transition-all ${
+                      theme === 'dark' 
+                        ? 'hover:bg-gray-700 text-gray-400' 
+                        : 'hover:bg-gray-100 text-gray-600'
+                    }`}>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Contenu */}
+                  <div className={`mb-4 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                    {post.content}
+                  </div>
+
+                  {/* Résultats d'analyse */}
+                  {analysisResults[post.id] && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className={`mb-4 p-3 rounded-lg ${
+                        theme === 'dark' ? 'bg-blue-900/30 border border-blue-700' : 'bg-blue-50 border border-blue-200'
+                      }`}
+                    >
+                      <h4 className={`font-semibold mb-2 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>
+                        Analyse IA
+                      </h4>
+                      <div className={`text-sm ${theme === 'dark' ? 'text-blue-200' : 'text-blue-600'}`}>
+                        {analysisResults[post.id].chat_analysis?.response}
+                      </div>
+                      {analysisResults[post.id].sentiment?.analysis?.sentiment && (
+                        <div className={`mt-2 text-xs ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Sentiment: {analysisResults[post.id].sentiment.analysis.sentiment.sentiment} 
+                          ({Math.round(analysisResults[post.id].sentiment.analysis.sentiment.confidence * 100)}%)
+                        </div>
+                      )}
+                      {analysisResults[post.id].fake_news?.status && (
+                        <div className={`mt-2 text-xs ${
+                          analysisResults[post.id].fake_news.status === 'fake' 
+                            ? 'text-red-500' 
+                            : analysisResults[post.id].fake_news.status === 'suspicious'
+                            ? 'text-orange-500'
+                            : 'text-green-500'
+                        }`}>
+                          Fiabilité: {analysisResults[post.id].fake_news.status}
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center gap-4">
+                      <button
+                        onClick={() => handleLike(post.id)}
+                        className={`flex items-center gap-2 transition-all ${
+                          post.liked 
+                            ? 'text-red-500' 
+                            : theme === 'dark' ? 'text-gray-400 hover:text-red-400' : 'text-gray-600 hover:text-red-500'
+                        }`}
+                      >
+                        <svg className="w-5 h-5" fill={post.liked ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <span className="text-sm">{post.likes}</span>
+                      </button>
+
+                      <button className={`flex items-center gap-2 transition-all ${
+                        theme === 'dark' ? 'text-gray-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-500'
+                      }`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <span className="text-sm">{post.comments}</span>
+                      </button>
+
+                      <button 
+                        onClick={() => handleAnalyzePost(post.id)}
+                        disabled={analyzing[post.id]}
+                        className={`flex items-center gap-2 transition-all ${
+                          analyzing[post.id]
+                            ? 'opacity-50 cursor-not-allowed'
+                            : theme === 'dark' ? 'text-gray-400 hover:text-purple-400' : 'text-gray-600 hover:text-purple-500'
+                        }`}
+                      >
+                        {analyzing[post.id] ? (
+                          <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        )}
+                        <span className="text-sm">
+                          {analyzing[post.id] ? 'Analyse...' : 'Analyser'}
+                        </span>
+                      </button>
+
+                      <button className={`flex items-center gap-2 transition-all ${
+                        theme === 'dark' ? 'text-gray-400 hover:text-green-400' : 'text-gray-600 hover:text-green-500'
+                      }`}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a9.001 9.001 0 01-7.432 0m9.032-4.026A9.001 9.001 0 0112 3c-4.474 0-8.268 3.12-9.032 7.326m0 0A9.001 9.001 0 0012 21c4.474 0 8.268-3.12 9.032-7.326" />
+                        </svg>
+                        <span className="text-sm">Partager</span>
+                      </button>
+                    </div>
+
+                    <button className={`transition-all ${
+                      theme === 'dark' ? 'text-gray-400 hover:text-orange-400' : 'text-gray-600 hover:text-orange-500'
+                    }`}
+                    onClick={() => handleReportPost(post.id)}
+                    title="Signaler ce post">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <Footer />
+    </>
+  );
+};
+
+export default Actualite;
