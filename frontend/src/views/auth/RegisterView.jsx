@@ -117,7 +117,7 @@ const RegisterView = () => {
         <div className="max-w-md w-full">
           <div className="glass p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2">
+              <h1 className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-2`}>
                 Inscription
               </h1>
               <p className="text-gray-600 dark:text-gray-300">
@@ -134,7 +134,7 @@ const RegisterView = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2">
+                  <label htmlFor="firstName" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                     Prénom
                   </label>
                   <input
@@ -156,7 +156,7 @@ const RegisterView = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2">
+                  <label htmlFor="lastName" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                     Nom
                   </label>
                   <input
@@ -179,7 +179,7 @@ const RegisterView = () => {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2">
+                <label htmlFor="email" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                   Email
                 </label>
                 <input
@@ -201,7 +201,7 @@ const RegisterView = () => {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2">
+                <label htmlFor="password" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                   Mot de passe
                 </label>
                 <input
@@ -223,7 +223,7 @@ const RegisterView = () => {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2">
+                <label htmlFor="confirmPassword" className={`block text-sm font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} mb-2`}>
                   Confirmer le mot de passe
                 </label>
                 <input
@@ -255,7 +255,7 @@ const RegisterView = () => {
                     errors.agreeToTerms ? 'border-red-500' : ''
                   }`}
                 />
-                <label htmlFor="agreeToTerms" className="ml-2 block text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}">
+                <label htmlFor="agreeToTerms" className={`ml-2 block text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                   J'accepte les{' '}
                   <a href="#" className="text-purple-600 hover:text-purple-500">
                     conditions d'utilisation
