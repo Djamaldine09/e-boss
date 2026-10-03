@@ -9,7 +9,6 @@ import Sidebar from './sidebar';
 import { ProgressCard, SprintProgress } from './progress-cards';
 import { QuickStats, RecentActivity, UpcomingDeadlines, LearningResources, StudyTimer } from './useful-widgets';
 import Footer from '../footer';
-import FloatingChatbot from '../chatbot/FloatingChatbot';
 import Profile from './profile';
 import CoursesSection from './dashboard-sections/cours/courses';
 import SprintsSection from './dashboard-sections/sprint/sprint';
@@ -246,7 +245,6 @@ const Dashboard = () => {
         </div>
       </main>
       
-      <FloatingChatbot />
     </div>
   );
 };
