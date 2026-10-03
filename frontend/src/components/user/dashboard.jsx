@@ -24,7 +24,7 @@ const Dashboard = () => {
   const { theme } = useTheme();
   const { section = 'overview' } = useParams();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState('overview');
 
   // Update current section when URL changes
