@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const router = express.Router();
 const { dbManager } = require('../db/connect');
 
@@ -33,6 +34,9 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'User already exists' });
     }
 
+    // Use a transaction so a failed session insert cannot leave a half-created user.
+    await connection.beginTransaction();
+
     // Hash password
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -57,11 +61,15 @@ router.post('/register', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Store session token
+    // Store only a SHA-256 digest of the JWT in the database.
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
     await connection.execute(
       'INSERT INTO session_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
-      [result.insertId, token, new Date(Date.now() + 24 * 60 * 60 * 1000)]
+      [result.insertId, tokenHash, new Date(Date.now() + 24 * 60 * 60 * 1000)]
     );
+
+    await connection.commit();
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -77,6 +85,11 @@ router.post('/register', async (req, res) => {
     });
 
   } catch (error) {
+    try {
+      await dbManager.connection.rollback();
+    } catch (_) {
+      // Ignore rollback errors when no transaction is active.
+    }
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
@@ -128,10 +141,12 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Store session token
+    // Store only a SHA-256 digest of the JWT in the database.
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
     await connection.execute(
       'INSERT INTO session_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
-      [user.id, token, new Date(Date.now() + 24 * 60 * 60 * 1000)]
+      [user.id, tokenHash, new Date(Date.now() + 24 * 60 * 60 * 1000)]
     );
 
     // Update last login
@@ -166,9 +181,11 @@ router.post('/logout', async (req, res) => {
     
     if (token) {
       const connection = dbManager.connection;
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
       await connection.execute(
         'UPDATE session_tokens SET is_active = FALSE WHERE token_hash = ?',
-        [token]
+        [tokenHash]
       );
     }
 
