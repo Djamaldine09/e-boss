@@ -332,7 +332,6 @@ const Actualite = () => {
 
     try {
       let imageUrls = [];
-      let hasBlockedContent = false;
       
       // Upload des images si présentes
       if (postImages.length > 0) {
@@ -341,24 +340,12 @@ const Actualite = () => {
         } catch (uploadErr) {
           console.error('Erreur upload images:', uploadErr);
           
-          // Vérifier si c'est une erreur de modération ou contenu interdit
-          if (uploadErr.message.includes('Contenu inapproprié détecté') || 
-              uploadErr.message.includes('explicitement interdit')) {
-            setError(uploadErr.message);
-            hasBlockedContent = true;
-            setIsSubmitting(false);
-            return; // Arrêter complètement la création du post
-          }
-          
-          // Continuer sans images si l'upload échoue pour d'autres raisons
-          const uploadError = 'Les images n\'ont pas pu être téléchargées, mais le post sera créé avec le texte.';
-          setError(uploadError);
+          // Dans tous les cas, ne pas publier un post avec une photo perdue.
+          const message = uploadErr?.message || "Impossible de télécharger les images.";
+          setError(message);
+          setIsSubmitting(false);
+          return;
         }
-      }
-
-      // Si du contenu a été bloqué, ne pas créer le post
-      if (hasBlockedContent) {
-        return;
       }
 
       console.log('imageUrls reçues de l\'upload:', imageUrls);
