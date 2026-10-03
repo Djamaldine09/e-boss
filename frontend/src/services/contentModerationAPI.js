@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const MODERATION_API_URL =
-  import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api';
+  import.meta.env.VITE_AI_API_URL || 'https://e-boss-ai-api.onrender.com/api';
 
 const contentModerationAPI = {
   analyzeImage: async (imageFile, userId = null) => {
