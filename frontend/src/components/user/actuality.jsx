@@ -277,8 +277,16 @@ const Actualite = () => {
       const unsafeImages = moderationResults.results.filter(result => !result.safe);
       
       if (unsafeImages.length > 0) {
-        const reasons = unsafeImages.map(result => result.analysis.reason).join(', ');
-        throw new Error(`Contenu inapproprié détecté: ${reasons}. Publication bloquée pour des raisons de sécurité.`);
+        const reasons = unsafeImages
+          .map((result) =>
+            result?.analysis?.reason ||
+            result?.analysis?.category ||
+            result?.reason ||
+            'Contenu potentiellement inapproprié détecté'
+          )
+          .filter(Boolean)
+          .join(', ');
+        throw new Error(`Contenu inapproprié détecté: ${reasons || 'vérification de sécurité échouée'}. Publication bloquée pour des raisons de sécurité.`);
       }
       
       console.log('Toutes les images sont sûres, procédant à l\'upload...');
