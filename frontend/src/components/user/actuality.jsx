@@ -287,28 +287,31 @@ const Actualite = () => {
       throw moderationError;
     }
 
-    // 2. Si les images sont sûres, procéder à l'upload
+    // 2. Si les images sont sûres, procéder à l'upload sur le backend de production
     const formData = new FormData();
-    images.forEach((file, index) => {
-      formData.append(`images`, file);
+    images.forEach((file) => {
+      formData.append('images', file);
     });
 
     try {
-      // Utiliser le backend Express sur le port 3001 pour l'upload
-      const response = await fetch('http://localhost:3001/api/upload', {
-        method: 'POST',
-        body: formData,
+      // API utilise déjà l'URL de production définie dans services/api.js
+      const data = await API.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000,
       });
-      
-      if (!response.ok) {
-        throw new Error('Échec du téléchargement des images');
+
+      if (!data?.urls || !Array.isArray(data.urls) || data.urls.length === 0) {
+        throw new Error("Le serveur n'a retourné aucune image");
       }
-      
-      const data = await response.json();
+
       return data.urls;
     } catch (err) {
-      console.error('Erreur lors du téléchargement des images:', err);
-      throw new Error('Échec du téléchargement des images');
+      console.error("Erreur lors du téléchargement des images:", err);
+      throw new Error(
+        err?.message || "Échec du téléchargement des images"
+      );
     }
   };
 
