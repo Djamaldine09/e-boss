@@ -7,6 +7,7 @@ import adminAPI from '../../services/adminAPI';
 import contentModerationAPI from '../../services/contentModerationAPI';
 import ImageUpload from '../ImageUpload';
 import API from '../../services/api';
+import profileAPI from '../../services/profileAPI';
 import DashboardNavbar from './dashboard-navbar';
 import Sidebar from './sidebar';
 
@@ -24,12 +25,44 @@ const Actualite = () => {
 
   const profilePhoto = currentUser?.profile_photo || currentUser?.profilePhoto || currentUser?.avatar || currentUser?.image || '';
   const profilePhotoUrl = profilePhoto
-    ? (/^https?:\\/\\//i.test(profilePhoto) ? profilePhoto : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\\/api\\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`)
+    ? (() => {
+        const baseUrl = /^https?:\/\//i.test(profilePhoto)
+          ? profilePhoto
+          : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`;
+        const version = currentUser?.updated_at || currentUser?.profile_photo || '';
+        return version ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(version)}` : baseUrl;
+      })()
     : '';
 
   useEffect(() => {
+    let mounted = true;
+
+    const loadCurrentProfile = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const response = await profileAPI.getProfile();
+        const profile = response?.user ?? response;
+        if (!mounted || !profile?.id) return;
+        const storedUser = (() => {
+          try { return JSON.parse(localStorage.getItem('user') || 'null') || {}; } catch { return {}; }
+        })();
+        const mergedUser = {
+          ...storedUser,
+          ...profile,
+          profile_photo: profile.profile_photo || storedUser.profile_photo || ''
+        };
+        setCurrentUser(mergedUser);
+        localStorage.setItem('user', JSON.stringify(mergedUser));
+      } catch (error) {
+        console.error('Erreur récupération profil pour Actualité:', error);
+      }
+    };
+
+    loadCurrentProfile();
+
     const syncUser = (event) => {
-      if (event?.detail) setCurrentUser(event.detail);
+      if (event?.detail) setCurrentUser(prev => ({ ...prev, ...event.detail }));
       else {
         try { setCurrentUser(JSON.parse(localStorage.getItem('user') || 'null')); } catch {}
       }
@@ -37,6 +70,7 @@ const Actualite = () => {
     window.addEventListener('profile-updated', syncUser);
     window.addEventListener('storage', syncUser);
     return () => {
+      mounted = false;
       window.removeEventListener('profile-updated', syncUser);
       window.removeEventListener('storage', syncUser);
     };
@@ -346,6 +380,13 @@ const Actualite = () => {
     }
   };
 
+  const isCurrentUserPost = useCallback((post) => {
+    if (post?.author === 'Vous') return true;
+    if (currentUser?.id && post?.authorId && Number(post.authorId) === Number(currentUser.id)) return true;
+    if (currentUser?.email && post?.authorEmail && post.authorEmail === currentUser.email) return true;
+    return false;
+  }, [currentUser]);
+
   const handleCreatePost = async () => {
     if (!newPost.trim() && postImages.length === 0) {
       setError('Veuillez ajouter du texte ou une image');
@@ -384,6 +425,8 @@ const Actualite = () => {
       const post = {
         id: Date.now(),
         author: 'Vous',
+        authorId: currentUser?.id || null,
+        authorEmail: currentUser?.email || null,
         avatar: 'VO',
         time: 'Maintenant',
         content: newPost,
@@ -650,7 +693,7 @@ const Actualite = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                        {post.author === 'Vous' && profilePhotoUrl ? (
+                        {isCurrentUserPost(post) && profilePhotoUrl ? (
                           <img src={profilePhotoUrl} alt="Votre photo de profil" className="w-full h-full object-cover" />
                         ) : post.avatar}
                       </div>
