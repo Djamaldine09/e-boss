@@ -7,6 +7,7 @@ import adminAPI from '../../services/adminAPI';
 import contentModerationAPI from '../../services/contentModerationAPI';
 import ImageUpload from '../ImageUpload';
 import API from '../../services/api';
+import { authAPI } from '../../services/api';
 import profileAPI from '../../services/profileAPI';
 import DashboardNavbar from './dashboard-navbar';
 import Sidebar from './sidebar';
@@ -41,7 +42,7 @@ const Actualite = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const response = await profileAPI.getProfile();
+        const response = await authAPI.getMe();
         const profile = response?.user ?? response;
         if (!mounted || !profile?.id) return;
         const storedUser = (() => {
@@ -693,7 +694,7 @@ const Actualite = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                        {isCurrentUserPost(post) && profilePhotoUrl ? (
+                        {(isCurrentUserPost(post) || post?.avatar === 'VO') && profilePhotoUrl ? (
                           <img src={profilePhotoUrl} alt="Votre photo de profil" className="w-full h-full object-cover" />
                         ) : post.avatar}
                       </div>
