@@ -26,7 +26,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   return (
     <>
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-6 py-4 transition-all ${
+        className={`fixed top-0 left-0 right-0 z-40 flex h-20 items-center justify-between px-3 sm:px-6 lg:px-8 transition-all ${
           theme === 'dark' 
             ? 'glass backdrop-blur-lg border-b border-white/10' 
             : 'glass backdrop-blur-lg border-b border-gray-200/50'
@@ -36,10 +36,10 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         {/* Section gauche - Menu burger et Logo */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onSidebarToggle}
-            className={`relative w-8 h-8 flex items-center justify-center rounded-xl transition-all hover:scale-105 ${
+            className={`relative w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.02] ${
               theme === 'dark' 
                 ? 'text-gray-300 hover:text-white hover:bg-white/10' 
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
@@ -75,19 +75,18 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
             </div>
           </button>
           
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-sm">
-              ED
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2"
+            aria-label="E-BOSS"
+          >
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-indigo-500 via-violet-500 to-cyan-400 rounded-xl flex items-center justify-center text-white font-extrabold text-xs sm:text-sm tracking-tight">
+              EB
             </div>
-            <div>
-              <div className={`font-semibold text-sm ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                Espace Learning
-              </div>
-              <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                Dashboard
-              </div>
-            </div>
-          </div>
+            <span className="hidden sm:inline text-sm font-extrabold tracking-[0.18em] text-slate-900 dark:text-white">
+              E-BOSS
+            </span>
+          </Link>
         </div>
 
         {/* Section droite - Actions rapides */}
@@ -97,8 +96,8 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
             to="/dashboard/actualite"
             className={`p-2 rounded-xl transition-all hover:scale-105 ${
               theme === 'dark' 
-                ? 'text-gray-300 hover:text-white hover:bg-gray-800' 
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                ? 'border-white/10 text-gray-300 hover:text-white hover:bg-white/[0.06]' 
+                : 'border-gray-200/80 text-gray-600 hover:text-gray-900 hover:bg-white'
             }`}
             title="Actualité"
           >
