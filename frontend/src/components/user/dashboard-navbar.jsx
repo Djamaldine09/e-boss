@@ -37,32 +37,21 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
             }`}
           >
-            <div className="relative w-6 h-5 flex flex-col justify-center items-center">
-              {/* Ligne du haut */}
-              <span 
-                className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ease-in-out ${
-                  sidebarOpen ? 'rotate-45' : '-translate-y-1.5'
-                }`}
-                style={{
-                  transform: sidebarOpen ? 'rotate(45deg)' : 'translateY(-6px)'
-                }}
-              />
-              
-              {/* Ligne du milieu */}
-              <span 
-                className={`block h-0.5 w-6 bg-current transition-all duration-300 ease-in-out ${
-                  sidebarOpen ? 'opacity-0' : 'opacity-100'
+            <div className="relative flex h-5 w-6 items-center justify-center">
+              <span
+                className={`absolute left-1/2 h-[2px] w-[22px] -translate-x-1/2 rounded-full bg-current transition-all duration-300 ease-out ${
+                  sidebarOpen ? 'rotate-45' : '-translate-y-[6px]'
                 }`}
               />
-              
-              {/* Ligne du bas */}
-              <span 
-                className={`absolute block h-0.5 w-6 bg-current transition-all duration-300 ease-in-out ${
-                  sidebarOpen ? '-rotate-45' : 'translate-y-1.5'
+              <span
+                className={`absolute left-1/2 h-[2px] w-[22px] -translate-x-1/2 rounded-full bg-current transition-all duration-200 ease-out ${
+                  sidebarOpen ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'
                 }`}
-                style={{
-                  transform: sidebarOpen ? 'rotate(-45deg)' : 'translateY(6px)'
-                }}
+              />
+              <span
+                className={`absolute left-1/2 h-[2px] w-[22px] -translate-x-1/2 rounded-full bg-current transition-all duration-300 ease-out ${
+                  sidebarOpen ? '-rotate-45' : 'translate-y-[6px]'
+                }`}
               />
             </div>
           </button>
