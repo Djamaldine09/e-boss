@@ -31,7 +31,8 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   }, []);
 
   const displayName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || 'Utilisateur';
-  const displayEmail = currentUser?.email || '';\n  const compactEmail = displayEmail.length > 20 ? `${displayEmail.slice(0, 20)}...` : displayEmail;
+  const displayEmail = currentUser?.email || '';
+  const compactEmail = displayEmail.length > 20 ? `${displayEmail.slice(0, 20)}...` : displayEmail;
   const initials = [currentUser?.firstName, currentUser?.lastName]
     .filter(Boolean).map((value) => value.charAt(0).toUpperCase()).join('').slice(0, 2) || 'U';
 
@@ -237,15 +238,15 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                 >
                   {/* En-tête du profil */}
                   <div className="p-4 border-b border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
                         {initials}
                       </div>
-                      <div>
-                        <div className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                      <div className="min-w-0 flex-1 overflow-hidden">
+                        <div className={`font-semibold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                           {displayName}
                         </div>
-                        <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <div className={`text-sm max-w-[180px] overflow-hidden whitespace-nowrap text-ellipsis ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} title={displayEmail}>
                           {compactEmail}
                         </div>
                       </div>
