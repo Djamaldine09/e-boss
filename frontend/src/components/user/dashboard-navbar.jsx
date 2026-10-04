@@ -8,7 +8,13 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   const { theme, toggleTheme } = useTheme();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || 'null');
+    } catch {
+      return null;
+    }
+  });
 
   useEffect(() => {
     let mounted = true;
@@ -19,20 +25,47 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
         const response = await authAPI.getMe();
         const user = response?.user ?? response;
         if (mounted && user) {
-          setCurrentUser(user);
-          localStorage.setItem('user', JSON.stringify(user));
+          const storedUser = (() => {
+            try { return JSON.parse(localStorage.getItem('user') || 'null') || {}; } catch { return {}; }
+          })();
+          const mergedUser = { ...storedUser, ...user, profile_photo: user.profile_photo || storedUser.profile_photo || '' };
+          setCurrentUser(mergedUser);
+          localStorage.setItem('user', JSON.stringify(mergedUser));
         }
       } catch (error) {
         console.error('Erreur récupération compte connecté:', error);
       }
     };
     loadCurrentUser();
-    return () => { mounted = false; };
+
+    const handleProfileUpdated = (event) => {
+      const updatedUser = event?.detail;
+      if (!updatedUser) return;
+      setCurrentUser(prev => ({ ...prev, ...updatedUser }));
+    };
+    const handleStorage = (event) => {
+      if (event.key !== 'user' || !event.newValue) return;
+      try {
+        setCurrentUser(JSON.parse(event.newValue));
+      } catch {}
+    };
+
+    window.addEventListener('profile-updated', handleProfileUpdated);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      mounted = false;
+      window.removeEventListener('profile-updated', handleProfileUpdated);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const displayName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || 'Utilisateur';
   const displayEmail = currentUser?.email || '';
   const compactEmail = displayEmail.length > 20 ? `${displayEmail.slice(0, 20)}...` : displayEmail;
+  const profilePhoto = currentUser?.profile_photo || currentUser?.profilePhoto || currentUser?.avatar || currentUser?.image || '';
+  const profilePhotoUrl = profilePhoto
+    ? (/^https?:\/\//i.test(profilePhoto) ? profilePhoto : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`)
+    : '';
   const initials = [currentUser?.firstName, currentUser?.lastName]
     .filter(Boolean).map((value) => value.charAt(0).toUpperCase()).join('').slice(0, 2) || 'U';
 
@@ -215,8 +248,10 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
-              <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                {initials}
+              <div className="w-8 h-8 overflow-hidden bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                {profilePhotoUrl ? (
+                  <img src={profilePhotoUrl} alt="Photo de profil" className="w-full h-full object-cover" />
+                ) : initials}
               </div>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -239,8 +274,10 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                   {/* En-tête du profil */}
                   <div className="p-4 border-b border-white/10">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-12 h-12 flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                        {initials}
+                      <div className="w-12 h-12 flex-shrink-0 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        {profilePhotoUrl ? (
+                          <img src={profilePhotoUrl} alt="Photo de profil" className="w-full h-full object-cover" />
+                        ) : initials}
                       </div>
                       <div className="min-w-0 flex-1 overflow-hidden">
                         <div className={`font-semibold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
