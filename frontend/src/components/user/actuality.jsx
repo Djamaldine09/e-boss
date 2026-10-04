@@ -18,6 +18,29 @@ const Actualite = () => {
   const [analyzing, setAnalyzing] = useState({});
   const [analysisResults, setAnalysisResults] = useState({});
   const [showPostMenu, setShowPostMenu] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+  });
+
+  const profilePhoto = currentUser?.profile_photo || currentUser?.profilePhoto || currentUser?.avatar || currentUser?.image || '';
+  const profilePhotoUrl = profilePhoto
+    ? (/^https?:\\/\\//i.test(profilePhoto) ? profilePhoto : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\\/api\\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`)
+    : '';
+
+  useEffect(() => {
+    const syncUser = (event) => {
+      if (event?.detail) setCurrentUser(event.detail);
+      else {
+        try { setCurrentUser(JSON.parse(localStorage.getItem('user') || 'null')); } catch {}
+      }
+    };
+    window.addEventListener('profile-updated', syncUser);
+    window.addEventListener('storage', syncUser);
+    return () => {
+      window.removeEventListener('profile-updated', syncUser);
+      window.removeEventListener('storage', syncUser);
+    };
+  }, []);
 
   // Liste de gros mots à détecter
   const forbiddenWords = [
@@ -530,8 +553,10 @@ const Actualite = () => {
             {/* Bouton créer une publication */}
             <div className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} shadow-lg`}>
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                  VO
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                  {profilePhotoUrl ? (
+                    <img src={profilePhotoUrl} alt="Votre photo de profil" className="w-full h-full object-cover" />
+                  ) : 'VO'}
                 </div>
                 <button
                   onClick={() => setShowCreatePost(!showCreatePost)}
@@ -624,8 +649,10 @@ const Actualite = () => {
                   {/* Header de la publication */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                        {post.avatar}
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                        {post.author === 'Vous' && profilePhotoUrl ? (
+                          <img src={profilePhotoUrl} alt="Votre photo de profil" className="w-full h-full object-cover" />
+                        ) : post.avatar}
                       </div>
                       <div>
                         <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
