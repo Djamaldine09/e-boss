@@ -67,14 +67,14 @@ const Sidebar = ({ isOpen, onClose }) => {
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-x-0 top-20 bottom-0 z-40 bg-black/25 backdrop-blur-[1px] md:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
       <motion.div
-        className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-72 z-30"
+        className="fixed top-20 left-0 z-50 h-[calc(100vh-5rem)] w-72 max-w-[calc(100vw-1rem)]"
         initial={{ x: -300 }}
         animate={{ x: isOpen ? 0 : -300 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
