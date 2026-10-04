@@ -7,6 +7,8 @@ const { dbManager } = require('../db/connect');
 
 // POST /api/auth/register - Register new user
 router.post('/register', async (req, res) => {
+  let connection;
+
   try {
     const { firstName, lastName, email, password } = req.body;
 
@@ -23,38 +25,36 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
-    // Check if user already exists
     const pool = dbManager.connection;
-    const connection = await pool.getConnection();
+    connection = await pool.getConnection();
+
+    // Check if user already exists on the same connection that will run
+    // the transaction, then release it immediately on the conflict path.
     const [existingUsers] = await connection.execute(
       'SELECT id FROM users WHERE email = ?',
       [email]
     );
 
     if (existingUsers.length > 0) {
-      connection.release();
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    // Use a transaction so a failed session insert cannot leave a half-created user.
+    // Keep ALL writes in the same transaction/connection.
     await connection.beginTransaction();
 
-    // Hash password
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create user
     const [result] = await connection.execute(
-      `INSERT INTO users (first_name, last_name, email, password_hash, role, level, preferences) 
+      `INSERT INTO users (first_name, last_name, email, password_hash, role, level, preferences)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [firstName, lastName, email, passwordHash, 'student', 'beginner', '{}']
     );
 
-    // Generate JWT token
     const token = jwt.sign(
-      { 
-        id: result.insertId, 
-        email, 
+      {
+        id: result.insertId,
+        email,
         role: 'student',
         firstName,
         lastName
@@ -66,13 +66,15 @@ router.post('/register', async (req, res) => {
     // Store only a SHA-256 digest of the JWT in the database.
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    await pool.execute(
+    // IMPORTANT: use the transaction connection here, not pool.execute().
+    // pool.execute() could use another connection and wait for the uncommitted
+    // users row, causing ER_LOCK_WAIT_TIMEOUT when session_tokens has a FK.
+    await connection.execute(
       'INSERT INTO session_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
       [result.insertId, tokenHash, new Date(Date.now() + 24 * 60 * 60 * 1000)]
     );
 
     await connection.commit();
-    connection.release();
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -86,20 +88,21 @@ router.post('/register', async (req, res) => {
         level: 'beginner'
       }
     });
-
   } catch (error) {
-    try {
-      if (connection) await connection.rollback();
-    } catch (_) {
-      // Ignore rollback errors when no transaction is active.
+    if (connection) {
+      try {
+        await connection.rollback();
+      } catch (_) {
+        // Ignore rollback errors when no transaction is active.
+      }
     }
-    try {
-      if (connection) connection.release();
-    } catch (_) {
-      // Ignore release errors.
-    }
+
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
   }
 });
 
@@ -138,9 +141,9 @@ router.post('/login', async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        id: user.id, 
-        email: user.email, 
+      {
+        id: user.id,
+        email: user.email,
         role: user.role,
         firstName: user.first_name,
         lastName: user.last_name
@@ -175,7 +178,6 @@ router.post('/login', async (req, res) => {
         level: user.level
       }
     });
-
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
@@ -186,7 +188,7 @@ router.post('/login', async (req, res) => {
 router.post('/logout', async (req, res) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (token) {
       const pool = dbManager.connection;
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
@@ -198,7 +200,6 @@ router.post('/logout', async (req, res) => {
     }
 
     res.json({ message: 'Logout successful' });
-
   } catch (error) {
     console.error('Logout error:', error);
     res.status(500).json({ error: 'Logout failed' });
@@ -209,13 +210,13 @@ router.post('/logout', async (req, res) => {
 router.get('/me', async (req, res) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
-    
+
     const pool = dbManager.connection;
     const [users] = await pool.execute(
       'SELECT id, first_name, last_name, email, role, level, preferences, profile_photo, created_at, last_login FROM users WHERE id = ? AND is_active = TRUE',
@@ -241,7 +242,6 @@ router.get('/me', async (req, res) => {
         lastLogin: user.last_login
       }
     });
-
   } catch (error) {
     console.error('Get user error:', error);
     if (error.name === 'JsonWebTokenError') {
@@ -255,7 +255,7 @@ router.get('/me', async (req, res) => {
 router.put('/me', async (req, res) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
+
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });
     }
@@ -264,11 +264,11 @@ router.put('/me', async (req, res) => {
     const { firstName, lastName, level, preferences } = req.body;
 
     const pool = dbManager.connection;
-    
+
     // Build update query dynamically
     const updates = [];
     const values = [];
-    
+
     if (firstName !== undefined) {
       updates.push('first_name = ?');
       values.push(firstName);
@@ -285,13 +285,13 @@ router.put('/me', async (req, res) => {
       updates.push('preferences = ?');
       values.push(JSON.stringify(preferences));
     }
-    
+
     if (updates.length === 0) {
       return res.status(400).json({ error: 'No fields to update' });
     }
-    
+
     values.push(decoded.id);
-    
+
     await pool.execute(
       `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
       values
@@ -320,7 +320,6 @@ router.put('/me', async (req, res) => {
         preferences: user.preferences
       }
     });
-
   } catch (error) {
     console.error('Update profile error:', error);
     if (error.name === 'JsonWebTokenError') {
