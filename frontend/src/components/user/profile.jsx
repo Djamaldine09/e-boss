@@ -8,10 +8,13 @@ import Footer from '../footer';
 import profileAPI from '../../services/profileAPI';
 
 const BACKEND_BASE_URL = (import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '');
-const getProfilePhotoUrl = (photoPath) => {
+const getProfilePhotoUrl = (photoPath, cacheKey = '') => {
   if (!photoPath) return '';
-  if (/^https?:\/\//i.test(photoPath)) return photoPath;
-  return `${BACKEND_BASE_URL}${photoPath.startsWith('/') ? photoPath : `/${photoPath}`}`;
+  const baseUrl = /^https?:\/\//i.test(photoPath)
+    ? photoPath
+    : `${BACKEND_BASE_URL}${photoPath.startsWith('/') ? photoPath : `/${photoPath}`}`;
+  if (!cacheKey) return baseUrl;
+  return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(cacheKey)}`;
 };
 
 const Profile = ({ standalone = false }) => {
@@ -132,19 +135,24 @@ const Profile = ({ standalone = false }) => {
         // Uploader la photo via l'API
         const result = await profileAPI.uploadPhoto(file);
         
-        // Mettre à jour le profil avec le nouveau chemin
-        setProfileData(prev => ({
-          ...prev,
-          profile_photo: result.photoPath
-        }));
-        
-        // Mettre à jour le localStorage
-        const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        const updatedUser = { ...userData, ...profileData, profile_photo: result.photoPath };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        window.dispatchEvent(new CustomEvent('profile-updated', { detail: updatedUser }));
-        
-        console.log('Photo uploadée avec succès:', result.photoPath);
+        // Recharger le profil depuis le serveur pour confirmer la photo réellement enregistrée.
+        const profileResponse = await profileAPI.getProfile();
+        const updatedProfile = profileResponse?.user ?? profileResponse ?? {};
+        const uploadedPhoto =
+          updatedProfile.profile_photo || result?.profile_photo || result?.photoPath || '';
+
+        const finalProfile = {
+          ...profileData,
+          ...updatedProfile,
+          profile_photo: uploadedPhoto,
+          updated_at: updatedProfile.updated_at || new Date().toISOString()
+        };
+
+        setProfileData(finalProfile);
+        localStorage.setItem('user', JSON.stringify(finalProfile));
+        window.dispatchEvent(new CustomEvent('profile-updated', { detail: finalProfile }));
+
+        console.log('Photo uploadée avec succès:', uploadedPhoto);
       } catch (error) {
         console.error('Erreur lors de l\'upload de la photo:', error);
         setError('Impossible d\'uploader la photo. Veuillez réessayer.');
@@ -234,7 +242,7 @@ const Profile = ({ standalone = false }) => {
                     <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl sm:text-3xl font-bold shadow-xl overflow-hidden">
                       {profileData.profile_photo ? (
                         <img 
-                          src={getProfilePhotoUrl(profileData.profile_photo)} 
+                          src={getProfilePhotoUrl(profileData.profile_photo, profileData.updated_at)} 
                           alt="Photo de profil"
                           className="w-full h-full object-cover"
                         />
