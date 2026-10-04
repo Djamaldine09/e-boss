@@ -31,7 +31,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   }, []);
 
   const displayName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || 'Utilisateur';
-  const displayEmail = currentUser?.email || '';\n  const compactEmail = displayEmail.length > 28 ? `${displayEmail.slice(0, 25)}...` : displayEmail;
+  const displayEmail = currentUser?.email || '';\n  const compactEmail = displayEmail.length > 20 ? `${displayEmail.slice(0, 20)}...` : displayEmail;
   const initials = [currentUser?.firstName, currentUser?.lastName]
     .filter(Boolean).map((value) => value.charAt(0).toUpperCase()).join('').slice(0, 2) || 'U';
 
@@ -246,7 +246,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                           {displayName}
                         </div>
                         <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {displayEmail}
+                          {compactEmail}
                         </div>
                       </div>
                     </div>
