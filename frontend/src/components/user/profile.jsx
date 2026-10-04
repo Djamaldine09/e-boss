@@ -49,10 +49,21 @@ const Profile = ({ standalone = false }) => {
         
         // Essayer de charger depuis l'API d'abord
         try {
-          const profile = await profileAPI.getProfile();
-          setProfileData(profile);
+          const response = await profileAPI.getProfile();
+          const profile = response?.user ?? response;
+          setProfileData(prev => ({
+            ...prev,
+            ...profile,
+            firstName: profile.firstName ?? prev.firstName,
+            lastName: profile.lastName ?? prev.lastName,
+            email: profile.email ?? prev.email,
+            skills: Array.isArray(profile.skills) ? profile.skills : prev.skills,
+            languages: Array.isArray(profile.languages) ? profile.languages : prev.languages,
+            education: Array.isArray(profile.education) ? profile.education : prev.education,
+            experience: Array.isArray(profile.experience) ? profile.experience : prev.experience
+          }));
           
-          // Mettre à jour le localStorage
+          // Garder les informations réelles du compte connecté en cache.
           localStorage.setItem('user', JSON.stringify(profile));
         } catch (apiError) {
           console.log('API non disponible, utilisation du localStorage');
@@ -124,10 +135,14 @@ const Profile = ({ standalone = false }) => {
       setError(null);
       
       // Sauvegarder via l'API
-      await profileAPI.updateProfile(profileData);
+      const response = await profileAPI.updateProfile(profileData);
+      const updatedUser = response?.user ?? response ?? profileData;
       
-      // Mettre à jour le localStorage
-      localStorage.setItem('user', JSON.stringify(profileData));
+      setProfileData(prev => ({
+        ...prev,
+        ...updatedUser
+      }));
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       
       setIsEditing(false);
       console.log('Profil sauvegardé avec succès');
