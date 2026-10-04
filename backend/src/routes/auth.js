@@ -218,7 +218,7 @@ router.get('/me', async (req, res) => {
     
     const pool = dbManager.connection;
     const [users] = await pool.execute(
-      'SELECT id, first_name, last_name, email, role, level, preferences, created_at, last_login FROM users WHERE id = ? AND is_active = TRUE',
+      'SELECT id, first_name, last_name, email, role, level, preferences, profile_photo, created_at, last_login FROM users WHERE id = ? AND is_active = TRUE',
       [decoded.id]
     );
 
@@ -236,6 +236,7 @@ router.get('/me', async (req, res) => {
         role: user.role,
         level: user.level,
         preferences: user.preferences,
+        profile_photo: user.profile_photo || null,
         createdAt: user.created_at,
         lastLogin: user.last_login
       }
