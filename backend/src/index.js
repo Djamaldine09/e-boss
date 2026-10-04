@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 // const rateLimit = require('./middleware/rateLimit'); // Temporairement désactivé
 const { dbManager } = require('./db/connect');
 
@@ -16,13 +15,11 @@ const profileRoutes = require('./routes/profile');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const PUBLIC_BACKEND_URL = (process.env.BACKEND_PUBLIC_URL || 'https://e-boss-backend.onrender.com').replace(/\/+$/, '');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // app.use(rateLimit); // Temporairement désactivé
 
 // Database connection
@@ -37,25 +34,14 @@ dbManager.connect()
 
 // Upload endpoint
 const multer = require('multer');
-const fs = require('fs');
+const { uploadBuffer, isConfigured: isCloudinaryConfigured } = require('./services/cloudinary');
 
-// Configuration de multer pour l'upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configuration de multer : les fichiers restent en mémoire puis sont envoyés
+// directement vers Cloudinary. Rien n'est conservé sur le disque Render.
+const storage = multer.memoryStorage();
 
-const upload = multer({ 
-  storage: storage,
+const upload = multer({
+  storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -66,24 +52,44 @@ const upload = multer({
   }
 });
 
-// Endpoint d'upload
-app.post('/api/upload', upload.array('images', 5), (req, res) => {
+// Endpoint d'upload vers Cloudinary
+app.post('/api/upload', upload.array('images', 5), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'Aucun fichier uploadé' });
     }
 
-    const urls = req.files.map(file => ({
-      url: `${PUBLIC_BACKEND_URL}/uploads/${file.filename}`,
-      filename: file.filename,
-      originalname: file.originalname,
-      size: file.size
+    if (!isCloudinaryConfigured()) {
+      return res.status(503).json({
+        error: 'Le stockage Cloudinary n\'est pas configuré sur le serveur'
+      });
+    }
+
+    const uploaded = await Promise.all(
+      req.files.map((file) => uploadBuffer(file.buffer, {
+        public_id: undefined,
+        context: {
+          original_name: file.originalname,
+        },
+      }))
+    );
+
+    const urls = uploaded.map((result, index) => ({
+      url: result.secure_url,
+      secure_url: result.secure_url,
+      filename: result.public_id,
+      public_id: result.public_id,
+      originalname: req.files[index].originalname,
+      size: req.files[index].size,
     }));
 
     res.json({ urls });
   } catch (error) {
-    console.error('Erreur upload:', error);
-    res.status(500).json({ error: 'Erreur lors de l\'upload' });
+    console.error('Erreur upload Cloudinary:', error);
+    res.status(500).json({
+      error: 'Erreur lors de l\'upload vers Cloudinary',
+      details: process.env.NODE_ENV === 'production' ? undefined : error.message,
+    });
   }
 });
 
