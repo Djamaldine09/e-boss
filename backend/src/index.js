@@ -12,6 +12,7 @@ const quizRoutes = require('./routes/quiz');
 const planningRoutes = require('./routes/planning');
 const dashboardRoutes = require('./routes/dashboard');
 const profileRoutes = require('./routes/profile');
+const actualityRoutes = require('./routes/actuality');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -101,6 +102,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/planning', planningRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/actuality', actualityRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
