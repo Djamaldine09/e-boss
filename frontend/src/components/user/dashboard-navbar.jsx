@@ -1,12 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/theme-context';
+import { authAPI } from '../../services/api';
 
 const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   const { theme, toggleTheme } = useTheme();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadCurrentUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const response = await authAPI.getMe();
+        const user = response?.user ?? response;
+        if (mounted && user) {
+          setCurrentUser(user);
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+      } catch (error) {
+        console.error('Erreur récupération compte connecté:', error);
+      }
+    };
+    loadCurrentUser();
+    return () => { mounted = false; };
+  }, []);
+
+  const displayName = [currentUser?.firstName, currentUser?.lastName].filter(Boolean).join(' ') || 'Utilisateur';
+  const displayEmail = currentUser?.email || '';
+  const initials = [currentUser?.firstName, currentUser?.lastName]
+    .filter(Boolean).map((value) => value.charAt(0).toUpperCase()).join('').slice(0, 2) || 'U';
 
   const notifications = [
     { id: 1, title: 'Nouveau cours disponible', description: 'React Hooks Avancés', time: 'Il y a 5 min', read: false },
