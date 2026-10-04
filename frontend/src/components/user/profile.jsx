@@ -40,82 +40,31 @@ const Profile = ({ standalone = false }) => {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [error, setError] = useState(null);
 
-  // Charger les données utilisateur depuis l'API
+  // Charger exclusivement les données du compte authentifié.
   useEffect(() => {
     const loadUserData = async () => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Essayer de charger depuis l'API d'abord
-        try {
-          const response = await profileAPI.getProfile();
-          const profile = response?.user ?? response;
-          setProfileData(prev => ({
-            ...prev,
-            ...profile,
-            firstName: profile.firstName ?? prev.firstName,
-            lastName: profile.lastName ?? prev.lastName,
-            email: profile.email ?? prev.email,
-            skills: Array.isArray(profile.skills) ? profile.skills : prev.skills,
-            languages: Array.isArray(profile.languages) ? profile.languages : prev.languages,
-            education: Array.isArray(profile.education) ? profile.education : prev.education,
-            experience: Array.isArray(profile.experience) ? profile.experience : prev.experience
-          }));
-          
-          // Garder les informations réelles du compte connecté en cache.
-          localStorage.setItem('user', JSON.stringify(profile));
-        } catch (apiError) {
-          console.log('API non disponible, utilisation du localStorage');
-          
-          // Fallback sur le localStorage
-          const userData = localStorage.getItem('user');
-          if (userData) {
-            const user = JSON.parse(userData);
-            setProfileData({
-              firstName: user.firstName || user.name || 'Utilisateur',
-              lastName: user.lastName || '',
-              email: user.email || 'user@example.com',
-              phone: user.phone || '',
-              bio: user.bio || 'Développeur passionné par les nouvelles technologies.',
-              location: user.location || 'France',
-              website: user.website || '',
-              github: user.github || '',
-              linkedin: user.linkedin || '',
-              twitter: user.twitter || '',
-              skills: user.skills || ['JavaScript', 'React', 'Node.js'],
-              languages: user.languages || ['Français', 'Anglais'],
-              education: user.education || [],
-              experience: user.experience || []
-            });
-          } else {
-            // Données par défaut si pas d'utilisateur connecté
-            setProfileData({
-              firstName: 'Visiteur',
-              lastName: '',
-              email: 'visiteur@example.com',
-              phone: '',
-              bio: 'Connectez-vous pour personnaliser votre profil.',
-              location: 'Non spécifié',
-              website: '',
-              github: '',
-              linkedin: '',
-              twitter: '',
-              skills: ['JavaScript', 'React', 'Node.js'],
-              languages: ['Français'],
-              education: [],
-              experience: []
-            });
-          }
-        }
+        const response = await profileAPI.getProfile();
+        const profile = response?.user ?? response;
+        if (!profile?.id) throw new Error('Profil authentifié introuvable');
+        setProfileData(prev => ({
+          ...prev,
+          ...profile,
+          skills: Array.isArray(profile.skills) ? profile.skills : [],
+          languages: Array.isArray(profile.languages) ? profile.languages : [],
+          education: Array.isArray(profile.education) ? profile.education : [],
+          experience: Array.isArray(profile.experience) ? profile.experience : []
+        }));
+        localStorage.setItem('user', JSON.stringify(profile));
       } catch (error) {
-        console.error('Erreur lors du chargement des données utilisateur:', error);
-        setError('Impossible de charger les données du profil');
+        console.error('Erreur lors du chargement du profil authentifié:', error);
+        setError(error?.message || 'Impossible de charger les données du profil');
       } finally {
         setLoading(false);
       }
     };
-
     loadUserData();
   }, []);
   
