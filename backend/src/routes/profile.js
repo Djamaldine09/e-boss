@@ -30,9 +30,13 @@ const upload = multer({
   }
 });
 
-const getUserId = (req) => {
+const getUserId = (req, res) => {
   const id = Number(req.user?.id);
-  return Number.isInteger(id) && id > 0 ? id : 1;
+  if (!Number.isInteger(id) || id <= 0) {
+    res.status(401).json({ error: 'Utilisateur non authentifié' });
+    return null;
+  }
+  return id;
 };
 
 const parseJsonArray = (value) => {
@@ -78,7 +82,9 @@ const normalizeProfile = (user) => ({
 
 router.get('/', async (req, res) => {
   try {
-    const [results] = await dbManager.connection.execute(PROFILE_SELECT, [getUserId(req)]);
+    const userId = getUserId(req, res);
+    if (!userId) return;
+    const [results] = await dbManager.connection.execute(PROFILE_SELECT, [userId]);
     if (results.length === 0) return res.status(404).json({ error: 'Utilisateur non trouvé' });
     res.json(normalizeProfile(results[0]));
   } catch (error) {
@@ -89,7 +95,8 @@ router.get('/', async (req, res) => {
 
 router.put('/', async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = getUserId(req, res);
+    if (!userId) return;
     const {
       firstName, lastName, email, phone, bio, location, website,
       github, linkedin, twitter, skills, languages, education, experience
@@ -142,9 +149,12 @@ router.post('/photo', upload.single('photo'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'Aucun fichier fourni' });
 
     const photoPath = `/uploads/profiles/${req.file.filename}`;
+    const userId = getUserId(req, res);
+    if (!userId) return;
+
     await dbManager.connection.execute(
       'UPDATE users SET profile_photo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [photoPath, getUserId(req)]
+      [photoPath, userId]
     );
 
     res.json({
@@ -159,7 +169,9 @@ router.post('/photo', upload.single('photo'), async (req, res) => {
 
 router.delete('/photo', async (req, res) => {
   try {
-    const userId = getUserId(req);
+    const userId = getUserId(req, res);
+    if (!userId) return;
+
     const [rows] = await dbManager.connection.execute(
       'SELECT profile_photo FROM users WHERE id = ?',
       [userId]
