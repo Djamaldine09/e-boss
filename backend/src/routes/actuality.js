@@ -9,8 +9,8 @@ const ensurePostsTable = async () => {
   if (!tableReadyPromise) {
     tableReadyPromise = dbManager.connection.execute(`
       CREATE TABLE IF NOT EXISTS actuality_posts (
-        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-        user_id BIGINT UNSIGNED NOT NULL,
+        id INT NOT NULL AUTO_INCREMENT,
+        user_id INT NOT NULL,
         content TEXT NOT NULL,
         images JSON NULL,
         likes INT UNSIGNED NOT NULL DEFAULT 0,
