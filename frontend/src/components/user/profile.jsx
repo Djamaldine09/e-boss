@@ -324,7 +324,7 @@ const Profile = ({ standalone = false }) => {
                     </h1>
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       <button
-                        onClick={handleEdit}
+                        onClick={isEditing ? handleSave : handleEdit}
                         disabled={saving || uploadingPhoto}
                         className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-all text-sm sm:text-base ${
                           isEditing
