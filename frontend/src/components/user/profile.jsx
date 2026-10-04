@@ -92,6 +92,7 @@ const Profile = ({ standalone = false }) => {
         ...updatedUser
       }));
       localStorage.setItem('user', JSON.stringify(updatedUser));
+      window.dispatchEvent(new CustomEvent('profile-updated', { detail: updatedUser }));
       
       setIsEditing(false);
       console.log('Profil sauvegardé avec succès');
@@ -139,8 +140,9 @@ const Profile = ({ standalone = false }) => {
         
         // Mettre à jour le localStorage
         const userData = JSON.parse(localStorage.getItem('user') || '{}');
-        userData.profile_photo = result.photoPath;
-        localStorage.setItem('user', JSON.stringify(userData));
+        const updatedUser = { ...userData, ...profileData, profile_photo: result.photoPath };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        window.dispatchEvent(new CustomEvent('profile-updated', { detail: updatedUser }));
         
         console.log('Photo uploadée avec succès:', result.photoPath);
       } catch (error) {
