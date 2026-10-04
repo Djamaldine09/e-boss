@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/theme-context';
-import { authAPI } from '../../services/api';
+import profileAPI from '../../services/profileAPI';
 
 const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   const { theme, toggleTheme } = useTheme();
@@ -22,7 +22,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const response = await authAPI.getMe();
+        const response = await profileAPI.getProfile();
         const user = response?.user ?? response;
         if (mounted && user) {
           const storedUser = (() => {
@@ -64,7 +64,13 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   const compactEmail = displayEmail.length > 20 ? `${displayEmail.slice(0, 20)}...` : displayEmail;
   const profilePhoto = currentUser?.profile_photo || currentUser?.profilePhoto || currentUser?.avatar || currentUser?.image || '';
   const profilePhotoUrl = profilePhoto
-    ? (/^https?:\/\//i.test(profilePhoto) ? profilePhoto : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`)
+    ? (() => {
+        const baseUrl = /^https?:\/\//i.test(profilePhoto)
+          ? profilePhoto
+          : `${(import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api').replace(/\/api\/?$/, '')}${profilePhoto.startsWith('/') ? profilePhoto : `/${profilePhoto}`}`;
+        const version = currentUser?.updated_at || currentUser?.profile_photo || '';
+        return version ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(version)}` : baseUrl;
+      })()
     : '';
   const initials = [currentUser?.firstName, currentUser?.lastName]
     .filter(Boolean).map((value) => value.charAt(0).toUpperCase()).join('').slice(0, 2) || 'U';
