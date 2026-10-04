@@ -8,7 +8,6 @@ import contentModerationAPI from '../../services/contentModerationAPI';
 import ImageUpload from '../ImageUpload';
 import API from '../../services/api';
 import { authAPI } from '../../services/api';
-import profileAPI from '../../services/profileAPI';
 import DashboardNavbar from './dashboard-navbar';
 import Sidebar from './sidebar';
 
@@ -168,109 +167,79 @@ const Actualite = () => {
     return detected;
   };
 
-  // Charger les posts depuis localStorage au démarrage
-  const [posts, setPosts] = useState(() => {
-    const savedPosts = localStorage.getItem('posts');
-    if (savedPosts) {
-      return JSON.parse(savedPosts);
-    }
-    // Posts par défaut si aucun stockage
-    return [
-      {
-        id: 1,
-        author: 'Marie Dubois',
-        avatar: 'MD',
-        time: 'Il y a 2 heures',
-        content: 'Super session de codage aujourd\'hui ! J\'ai enfin réussi à implémenter le système d\'authentification avec JWT.',
-        likes: 12,
-        comments: 3,
-        liked: false,
-        image: null
-      },
-      {
-        id: 2,
-        author: 'Thomas Martin',
-        avatar: 'TM',
-        time: 'Il y a 4 heures',
-        content: 'Quelqu\'un connaît un bon tutoriel sur React Hooks ? Je bloque sur useEffect avec les API.',
-        likes: 8,
-        comments: 7,
-        liked: true,
-        image: null
-      },
-      {
-        id: 3,
-        author: 'Jean Dupont',
-        avatar: 'JD',
-        time: 'Il y a 1 heure',
-        content: 'Le gouvernement a annoncé un nouveau plan pour réduire les émissions de gaz à effet de serre. Mais est-ce vraiment efficace ?',
-        likes: 20,
-        comments: 10,
-        liked: false,
-        image: null
-      },
-      {
-        id: 4,
-        author: 'Pierre Durand',
-        avatar: 'PD',
-        time: 'Il y a 3 heures',
-        content: 'La nouvelle loi sur la sécurité routière est-elle vraiment nécessaire ? Les conducteurs sont-ils vraiment responsables des accidents ?',
-        likes: 15,
-        comments: 8,
-        liked: true,
-        image: null
-      },
-      {
-        id: 5,
-        author: 'Tech Expert',
-        avatar: 'TE',
-        time: 'Il y a 30 minutes',
-        content: 'Les fichiers JavaScript s\'exécutent directement côté serveur par défaut.',
-        likes: 3,
-        comments: 1,
-        liked: false,
-        image: null
-      },
-      {
-        id: 6,
-        author: 'History Buff',
-        avatar: 'HB',
-        time: 'Il y a 1 heure',
-        content: 'Saviez-vous que les Vikings portaient des casques à cornes ? C\'est tellement iconique !',
-        likes: 8,
-        comments: 2,
-        liked: false,
-        image: null
-      },
-      {
-        id: 7,
-        author: 'Science Fan',
-        avatar: 'SF',
-        time: 'Il y a 2 heures',
-        content: 'Les chameaux stockent de l\'eau dans leurs bosses pour survivre dans le désert. Fascinant !',
-        likes: 12,
-        comments: 4,
-        liked: true,
-        image: null
-      },
-      {
-        id: 8,
-        author: 'Geek Culture',
-        avatar: 'GC',
-        time: 'Il y a 45 minutes',
-        content: 'Les humains utilisent seulement 10 % de leur cerveau. Imaginez si on pouvait débloquer les 90 % restants !',
-        likes: 25,
-        comments: 7,
-        liked: false,
-        image: null
-      }
-    ];
-  });
+  const formatPostTime = useCallback((createdAt) => {
+    if (!createdAt) return '';
 
-  // Sauvegarder les posts dans localStorage à chaque modification
+    const date = new Date(createdAt);
+    if (Number.isNaN(date.getTime())) return '';
+
+    const diffMs = Date.now() - date.getTime();
+    const diffSeconds = Math.max(0, Math.floor(diffMs / 1000));
+    if (diffSeconds < 60) return "À l'instant";
+
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    if (diffMinutes < 60) return `Il y a ${diffMinutes} min`;
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `Il y a ${diffHours} h`;
+
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays < 7) return `Il y a ${diffDays} j`;
+
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }, []);
+
+  const resolvePhotoUrl = useCallback((photo) => {
+    if (!photo) return '';
+
+    if (/^https?:\/\//i.test(photo)) {
+      return photo;
+    }
+
+    const apiBase = import.meta.env.VITE_API_URL || 'https://e-boss-backend.onrender.com/api';
+    const backendBase = apiBase.replace(/\/api\/?$/, '');
+    return `${backendBase}${photo.startsWith('/') ? photo : `/${photo}`}`;
+  }, []);
+
+  const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+
   useEffect(() => {
-    localStorage.setItem('posts', JSON.stringify(posts));
-  }, [posts]);
+    let mounted = true;
+
+    const loadPosts = async () => {
+      try {
+        const response = await API.get('/actuality/posts');
+        if (!mounted) return;
+
+        const remotePosts = Array.isArray(response?.posts) ? response.posts : [];
+        setPosts(remotePosts);
+      } catch (loadError) {
+        console.error('Erreur chargement des actualités:', loadError);
+        if (mounted) {
+          setPosts([]);
+          setError(loadError?.message || 'Impossible de charger les publications');
+        }
+      } finally {
+        if (mounted) setPostsLoading(false);
+      }
+    };
+
+    // Supprimer les anciennes publications purement locales afin qu'un compte
+    // ne voie plus les publications créées par un autre compte sur le même appareil.
+    localStorage.removeItem('posts');
+    loadPosts();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const [postImages, setPostImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -382,10 +351,11 @@ const Actualite = () => {
   };
 
   const isCurrentUserPost = useCallback((post) => {
-    if (post?.author === 'Vous') return true;
-    if (currentUser?.id && post?.authorId && Number(post.authorId) === Number(currentUser.id)) return true;
-    if (currentUser?.email && post?.authorEmail && post.authorEmail === currentUser.email) return true;
-    return false;
+    return Boolean(
+      currentUser?.id &&
+      post?.authorId &&
+      Number(post.authorId) === Number(currentUser.id)
+    );
   }, [currentUser]);
 
   const handleCreatePost = async () => {
@@ -394,7 +364,6 @@ const Actualite = () => {
       return;
     }
 
-    // Vérifier les gros mots dans le texte
     if (checkForbiddenWords(newPost)) {
       setError('Contenu inapproprié détecté dans le texte. Publication bloquée pour des raisons de sécurité.');
       return;
@@ -405,54 +374,38 @@ const Actualite = () => {
 
     try {
       let imageUrls = [];
-      
-      // Upload des images si présentes
+
       if (postImages.length > 0) {
         try {
           imageUrls = await uploadImages(postImages);
         } catch (uploadErr) {
           console.error('Erreur upload images:', uploadErr);
-          
-          // Dans tous les cas, ne pas publier un post avec une photo perdue.
-          const message = uploadErr?.message || "Impossible de télécharger les images.";
-          setError(message);
-          setIsSubmitting(false);
+          setError(uploadErr?.message || "Impossible de télécharger les images.");
           return;
         }
       }
 
-      console.log('imageUrls reçues de l\'upload:', imageUrls);
-      
-      const post = {
-        id: Date.now(),
-        author: 'Vous',
-        authorId: currentUser?.id || null,
-        authorEmail: currentUser?.email || null,
-        avatar: 'VO',
-        time: 'Maintenant',
-        content: newPost,
-        likes: 0,
-        comments: 0,
-        liked: false,
-        images: imageUrls.map(imageObj => ({
-          url: imageObj.url,
-          preview: imageObj.url // Pour la prévisualisation immédiate
+      const response = await API.post('/actuality/posts', {
+        content: newPost.trim(),
+        images: imageUrls.map((imageObj) => ({
+          url: imageObj.url || imageObj.secure_url,
+          preview: imageObj.url || imageObj.secure_url
         }))
-      };
-      
-      console.log('Post créé avec images:', post);
+      });
 
-      // Ici, vous pourriez envoyer le post à votre API
-      // await api.post('/api/posts', post);
+      const createdPost = response?.post;
+      if (!createdPost?.id || !createdPost?.authorId) {
+        throw new Error("Le serveur n'a pas retourné une publication valide.");
+      }
 
-      setPosts([post, ...posts]);
+      setPosts((previousPosts) => [createdPost, ...previousPosts]);
       setNewPost('');
       setPostImages([]);
       setShowCreatePost(false);
-      setError(''); // Effacer l'erreur après succès
+      setError('');
     } catch (err) {
       console.error('Erreur lors de la création du post:', err);
-      setError('Une erreur est survenue lors de la création du post');
+      setError(err?.message || 'Une erreur est survenue lors de la création du post');
     } finally {
       setIsSubmitting(false);
     }
@@ -526,21 +479,26 @@ const Actualite = () => {
   };
 
   const handleDeletePost = async (postId) => {
+    const post = posts.find((item) => Number(item.id) === Number(postId));
+    if (!post || !isCurrentUserPost(post)) {
+      showNotification('Vous ne pouvez supprimer que vos propres publications.', 'error');
+      return;
+    }
+
     if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce post ?')) {
       return;
     }
 
     try {
-      // Supprimer le post de l'état local
-      setPosts(prev => prev.filter(p => p.id !== postId));
-      
-      // Fermer le menu
+      await API.delete(`/actuality/posts/${postId}`);
+      setPosts((previousPosts) =>
+        previousPosts.filter((item) => Number(item.id) !== Number(postId))
+      );
       setShowPostMenu(null);
-      
       showNotification('Post supprimé avec succès', 'success');
     } catch (error) {
       console.error('Erreur lors de la suppression du post:', error);
-      showNotification('Erreur lors de la suppression du post', 'error');
+      showNotification(error?.message || 'Erreur lors de la suppression du post', 'error');
     }
   };
 
@@ -683,7 +641,16 @@ const Actualite = () => {
 
             {/* Liste des publications */}
             <div className="space-y-4 sm:space-y-6">
-              {posts.map((post) => (
+              {postsLoading ? (
+                <div className={`p-6 text-center rounded-xl ${theme === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} shadow-lg`}>
+                  Chargement des actualités...
+                </div>
+              ) : posts.length === 0 ? (
+                <div className={`p-6 text-center rounded-xl ${theme === 'dark' ? 'bg-gray-800 text-gray-300' : 'bg-white text-gray-600'} shadow-lg`}>
+                  Aucune publication pour le moment.
+                </div>
+              ) : (
+                posts.map((post) => (
                 <motion.div
                   key={post.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -694,16 +661,18 @@ const Actualite = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
-                        {(isCurrentUserPost(post) || post?.avatar === 'VO') && profilePhotoUrl ? (
+                        {post?.profilePhoto ? (
+                          <img src={resolvePhotoUrl(post.profilePhoto)} alt={post.author || 'Photo de profil'} className="w-full h-full object-cover" />
+                        ) : isCurrentUserPost(post) && profilePhotoUrl ? (
                           <img src={profilePhotoUrl} alt="Votre photo de profil" className="w-full h-full object-cover" />
                         ) : post.avatar}
                       </div>
                       <div>
                         <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          {post.author}
+                          {isCurrentUserPost(post) ? 'Vous' : post.author}
                         </h3>
                         <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
-                          {post.time}
+                          {formatPostTime(post.createdAt)}
                         </p>
                       </div>
                     </div>
@@ -905,7 +874,8 @@ const Actualite = () => {
                     </button>
                   </div>
                 </motion.div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
