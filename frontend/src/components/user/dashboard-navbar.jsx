@@ -215,7 +215,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
               }`}
             >
               <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                JD
+                {initials}
               </div>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -239,14 +239,14 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
                   <div className="p-4 border-b border-white/10">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                        JD
+                        {initials}
                       </div>
                       <div>
                         <div className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                          Jean Dupont
+                          {displayName}
                         </div>
                         <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
-                          jean.dupont@email.com
+                          {displayEmail}
                         </div>
                       </div>
                     </div>
