@@ -209,6 +209,7 @@ const Actualite = () => {
 
   const [posts, setPosts] = useState([]);
   const [postsLoading, setPostsLoading] = useState(true);
+  const [serverCurrentUserId, setServerCurrentUserId] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -219,14 +220,12 @@ const Actualite = () => {
         if (!mounted) return;
 
         const remotePosts = Array.isArray(response?.posts) ? response.posts : [];
-        const serverCurrentUserId = Number(response?.currentUserId);
+        const authenticatedUserId = Number(response?.currentUserId);
 
-        if (Number.isInteger(serverCurrentUserId) && serverCurrentUserId > 0) {
-          setCurrentUser((previousUser) => (
-            previousUser?.id && Number(previousUser.id) === serverCurrentUserId
-              ? previousUser
-              : { ...(previousUser || {}), id: serverCurrentUserId }
-          ));
+        if (Number.isInteger(authenticatedUserId) && authenticatedUserId > 0) {
+          setServerCurrentUserId(authenticatedUserId);
+        } else {
+          setServerCurrentUserId(null);
         }
 
         // Une publication provenant du serveur ne doit jamais être transformée
@@ -370,11 +369,11 @@ const Actualite = () => {
 
   const isCurrentUserPost = useCallback((post) => {
     return Boolean(
-      currentUser?.id &&
+      serverCurrentUserId &&
       post?.authorId &&
-      Number(post.authorId) === Number(currentUser.id)
+      Number(post.authorId) === Number(serverCurrentUserId)
     );
-  }, [currentUser]);
+  }, [serverCurrentUserId]);
 
   const handleCreatePost = async () => {
     if (!newPost.trim() && postImages.length === 0) {
