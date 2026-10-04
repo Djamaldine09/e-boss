@@ -24,13 +24,15 @@ router.post('/register', async (req, res) => {
     }
 
     // Check if user already exists
-    const connection = dbManager.connection;
+    const pool = dbManager.connection;
+    const connection = await pool.getConnection();
     const [existingUsers] = await connection.execute(
       'SELECT id FROM users WHERE email = ?',
       [email]
     );
 
     if (existingUsers.length > 0) {
+      connection.release();
       return res.status(409).json({ error: 'User already exists' });
     }
 
@@ -64,12 +66,13 @@ router.post('/register', async (req, res) => {
     // Store only a SHA-256 digest of the JWT in the database.
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    await connection.execute(
+    await pool.execute(
       'INSERT INTO session_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
       [result.insertId, tokenHash, new Date(Date.now() + 24 * 60 * 60 * 1000)]
     );
 
     await connection.commit();
+    connection.release();
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -86,9 +89,14 @@ router.post('/register', async (req, res) => {
 
   } catch (error) {
     try {
-      await dbManager.connection.rollback();
+      if (connection) await connection.rollback();
     } catch (_) {
       // Ignore rollback errors when no transaction is active.
+    }
+    try {
+      if (connection) connection.release();
+    } catch (_) {
+      // Ignore release errors.
     }
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
@@ -110,8 +118,8 @@ router.post('/login', async (req, res) => {
     }
 
     // Find user
-    const connection = dbManager.connection;
-    const [users] = await connection.execute(
+    const pool = dbManager.connection;
+    const [users] = await pool.execute(
       'SELECT id, first_name, last_name, email, password_hash, role, level FROM users WHERE email = ? AND is_active = TRUE',
       [email]
     );
@@ -150,7 +158,7 @@ router.post('/login', async (req, res) => {
     );
 
     // Update last login
-    await connection.execute(
+    await pool.execute(
       'UPDATE users SET last_login = NOW() WHERE id = ?',
       [user.id]
     );
@@ -180,10 +188,10 @@ router.post('/logout', async (req, res) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (token) {
-      const connection = dbManager.connection;
+      const pool = dbManager.connection;
       const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-      await connection.execute(
+      await pool.execute(
         'UPDATE session_tokens SET is_active = FALSE WHERE token_hash = ?',
         [tokenHash]
       );
@@ -208,8 +216,8 @@ router.get('/me', async (req, res) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
     
-    const connection = dbManager.connection;
-    const [users] = await connection.execute(
+    const pool = dbManager.connection;
+    const [users] = await pool.execute(
       'SELECT id, first_name, last_name, email, role, level, preferences, created_at, last_login FROM users WHERE id = ? AND is_active = TRUE',
       [decoded.id]
     );
@@ -254,7 +262,7 @@ router.put('/me', async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
     const { firstName, lastName, level, preferences } = req.body;
 
-    const connection = dbManager.connection;
+    const pool = dbManager.connection;
     
     // Build update query dynamically
     const updates = [];
@@ -283,13 +291,13 @@ router.put('/me', async (req, res) => {
     
     values.push(decoded.id);
     
-    await connection.execute(
+    await pool.execute(
       `UPDATE users SET ${updates.join(', ')} WHERE id = ?`,
       values
     );
 
     // Get updated user info
-    const [users] = await connection.execute(
+    const [users] = await pool.execute(
       'SELECT id, first_name, last_name, email, role, level, preferences FROM users WHERE id = ?',
       [decoded.id]
     );
