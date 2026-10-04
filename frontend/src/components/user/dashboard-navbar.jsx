@@ -15,14 +15,6 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
     { id: 4, title: 'Message de votre mentor', description: 'Révision de votre dernier projet', time: 'Il y a 5h', read: true }
   ];
 
-  const userMenu = [
-    { name: 'Mon Profil', href: '/dashboard/profile', icon: '👤' },
-    { name: 'Paramètres du compte', href: '/dashboard/settings', icon: '⚙️' },
-    { name: 'Sécurité', href: '/dashboard/security', icon: '🔒' },
-    { name: 'Aide', href: '/dashboard/help', icon: '❓' },
-    { name: 'Déconnexion', href: '/logout', icon: '🚪', isLogout: true }
-  ];
-
   return (
     <>
       <motion.nav
@@ -94,7 +86,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
           {/* Bouton Actualité */}
           <Link
             to="/dashboard/actualite"
-            className={`p-2 rounded-xl transition-all hover:scale-105 ${
+            className={`w-10 h-10 p-0 flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.02] ${
               theme === 'dark' 
                 ? 'border-white/10 text-gray-300 hover:text-white hover:bg-white/[0.06]' 
                 : 'border-gray-200/80 text-gray-600 hover:text-gray-900 hover:bg-white'
@@ -110,10 +102,10 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
           <div className="relative">
             <button
               onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className={`relative p-2 rounded-xl transition-all hover:scale-105 ${
+              className={`relative w-10 h-10 p-0 flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.02] ${
                 theme === 'dark' 
-                  ? 'text-gray-300 hover:text-white hover:bg-gray-800' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'border-white/10 text-gray-300 hover:text-white hover:bg-white/[0.06]' 
+                  : 'border-gray-200/80 text-gray-600 hover:text-gray-900 hover:bg-white'
               }`}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
