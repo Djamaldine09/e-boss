@@ -1,32 +1,20 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { uploadBuffer, isConfigured: isCloudinaryConfigured } = require('../services/cloudinary');
 const { dbManager } = require('../db/connect');
 const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(authMiddleware);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '../../uploads/profiles');
-    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (allowedTypes.includes(file.mimetype)) cb(null, true);
-    else cb(new Error('Seuls les fichiers JPEG, PNG et GIF sont autorisés'), false);
+    else cb(new Error('Seuls les fichiers image JPEG, PNG, GIF ou WebP sont autorisés'), false);
   }
 });
 
@@ -147,10 +135,22 @@ router.put('/', async (req, res) => {
 router.post('/photo', upload.single('photo'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'Aucun fichier fourni' });
+    if (!isCloudinaryConfigured()) {
+      return res.status(503).json({ error: 'Le stockage Cloudinary n\'est pas configuré sur le serveur' });
+    }
 
-    const photoPath = `/uploads/profiles/${req.file.filename}`;
     const userId = getUserId(req, res);
     if (!userId) return;
+
+    const uploaded = await uploadBuffer(req.file.buffer, {
+      folder: 'e-boss/profiles',
+      resource_type: 'image',
+      public_id: `user-${userId}`,
+      overwrite: true,
+      invalidate: true
+    });
+
+    const photoPath = uploaded.secure_url;
 
     await dbManager.connection.execute(
       'UPDATE users SET profile_photo = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
@@ -159,11 +159,15 @@ router.post('/photo', upload.single('photo'), async (req, res) => {
 
     res.json({
       message: 'Photo de profil mise à jour avec succès',
-      photoPath
+      photoPath,
+      profile_photo: photoPath
     });
   } catch (error) {
-    console.error("Erreur lors de l'upload de la photo:", error);
-    res.status(500).json({ error: 'Erreur serveur' });
+    console.error("Erreur lors de l'upload de la photo de profil:", error);
+    res.status(500).json({
+      error: 'Erreur lors de l\'upload de la photo',
+      details: process.env.NODE_ENV === 'production' ? undefined : error.message
+    });
   }
 });
 
@@ -171,17 +175,6 @@ router.delete('/photo', async (req, res) => {
   try {
     const userId = getUserId(req, res);
     if (!userId) return;
-
-    const [rows] = await dbManager.connection.execute(
-      'SELECT profile_photo FROM users WHERE id = ?',
-      [userId]
-    );
-
-    const storedPath = rows[0]?.profile_photo;
-    if (storedPath) {
-      const localPath = path.join(__dirname, '../../', storedPath.replace(/^\/+/, ''));
-      if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
-    }
 
     await dbManager.connection.execute(
       'UPDATE users SET profile_photo = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
