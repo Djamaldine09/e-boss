@@ -152,7 +152,7 @@ router.post('/login', async (req, res) => {
     // Store only a SHA-256 digest of the JWT in the database.
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    await connection.execute(
+    await pool.execute(
       'INSERT INTO session_tokens (user_id, token_hash, expires_at) VALUES (?, ?, ?)',
       [user.id, tokenHash, new Date(Date.now() + 24 * 60 * 60 * 1000)]
     );
