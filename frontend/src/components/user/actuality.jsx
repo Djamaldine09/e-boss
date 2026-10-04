@@ -219,7 +219,24 @@ const Actualite = () => {
         if (!mounted) return;
 
         const remotePosts = Array.isArray(response?.posts) ? response.posts : [];
-        setPosts(remotePosts);
+        const serverCurrentUserId = Number(response?.currentUserId);
+
+        if (Number.isInteger(serverCurrentUserId) && serverCurrentUserId > 0) {
+          setCurrentUser((previousUser) => (
+            previousUser?.id && Number(previousUser.id) === serverCurrentUserId
+              ? previousUser
+              : { ...(previousUser || {}), id: serverCurrentUserId }
+          ));
+        }
+
+        // Une publication provenant du serveur ne doit jamais être transformée
+        // en "Vous" à partir d'un ancien champ local. L'unique source de vérité
+        // pour la propriété du post est authorId/userId.
+        setPosts(remotePosts.map((post) => ({
+          ...post,
+          authorId: Number(post.authorId ?? post.userId),
+          userId: Number(post.userId ?? post.authorId),
+        })));
       } catch (loadError) {
         console.error('Erreur chargement des actualités:', loadError);
         if (mounted) {
@@ -231,8 +248,9 @@ const Actualite = () => {
       }
     };
 
-    // Supprimer les anciennes publications purement locales afin qu'un compte
-    // ne voie plus les publications créées par un autre compte sur le même appareil.
+    // Les publications ne sont plus une donnée de compte dans localStorage.
+    // On supprime uniquement cet ancien cache pour empêcher toute contamination
+    // entre deux comptes utilisant le même navigateur.
     localStorage.removeItem('posts');
     loadPosts();
 
