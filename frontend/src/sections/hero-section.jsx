@@ -172,30 +172,6 @@ export default function HeroSection() {
                           </div>
                         )}
                         
-                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 relative z-10 ${
-                          isChristmasMode 
-                            ? 'bg-gradient-to-r from-red-500/20 to-green-500/20 border border-red-500/30' 
-                            : 'bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30'
-                        }`}>
-                            <span className={`w-2 h-2 rounded-full ${
-                              isChristmasMode ? 'bg-red-500 animate-pulse' : 'bg-purple-500 animate-pulse'
-                            }`}></span>
-                            <span className={`text-sm font-medium ${
-                              isChristmasMode 
-                                ? 'text-red-600 dark:text-red-300' 
-                                : 'text-purple-700 dark:text-purple-300'
-                            }`}>
-                                {isChristmasMode ? (
-                                  <span className="flex items-center gap-2">
-                                    <span className="w-4 h-4 inline-flex">
-                                      
-                                    </span>
-                                    Intelligence Artificielle pour l'Éducation
-                                  </span>
-                                ) : "Intelligence Artificielle pour l'Éducation"}
-                            </span>
-                        </div>
-                        
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 relative z-10">
                             {isChristmasMode && (
                               <span className="absolute -left-12 -top-4 w-16 h-16">
