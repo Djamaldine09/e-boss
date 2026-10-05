@@ -220,7 +220,7 @@ export default function HeroSection() {
                         <p className={`text-xl mb-8 max-w-2xl relative z-10 ${
                           isChristmasMode 
                             ? 'text-gray-300 dark:text-gray-200' 
-                            : 'text-gray-600 dark:text-gray-300'
+                            : 'text-gray-600 dark:text-white'
                         }`}>
                             Notre plateforme éducative intelligente détecte la désinformation, 
                             analyse le contenu toxique, sécurise les examens et évalue la 
