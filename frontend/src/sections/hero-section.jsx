@@ -154,7 +154,7 @@ export default function HeroSection() {
           </motion.div>
         )}
       
-      <section className="relative py-16 md:py-24 lg:py-32">
+      <section className="relative pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-40 lg:pb-32">
         {/* Animation Lottie cadeaux flottants pour Noël */}
         {isChristmasMode && (
           <div className="absolute top-1/4 left-10 w-24 h-24 pointer-events-none">
