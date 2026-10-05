@@ -15,10 +15,6 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
         >
-            <div>
-                <img src='/assets/logo.svg' alt='logo' className='h-8.5 w-auto' width={205} height={48} />
-            </div>
-
             <div className="flex flex-wrap items-center justify-center gap-8 py-8">
                 {links.map((link, index) => (
                     <a key={index} href={link.href} className='transition hover:text-gray-300'>
