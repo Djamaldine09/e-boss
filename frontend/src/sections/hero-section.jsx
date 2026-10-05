@@ -228,7 +228,7 @@ export default function HeroSection() {
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 mb-8 relative z-10">
-                            <button className={`px-8 py-3 text-white rounded-lg font-semibold hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center gap-2 ${
+                            <button className={`px-8 py-3 text-white rounded-[35px] font-semibold hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center gap-2 ${
                               isChristmasMode 
                                 ? 'bg-red-500 shadow-red-500/30 hover:shadow-red-500/50' 
                                 : 'bg-gradient-to-r from-purple-600 to-blue-600'
@@ -239,13 +239,6 @@ export default function HeroSection() {
                                   </span>
                                 )}
                                 Commencer gratuitement
-                            </button>
-                            <button className={`px-8 py-3 border rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 ${
-                              isChristmasMode 
-                                ? 'border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50 text-gray-300' 
-                                : 'border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
-                            }`}>
-                                Voir la démo
                             </button>
                         </div>
                         
