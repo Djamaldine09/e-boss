@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/theme-context';
 import { useChristmas } from "../context/christmas-context";
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import Lottie from 'lottie-react';
 
 // Importez vos animations Lottie
@@ -204,7 +205,7 @@ export default function HeroSection() {
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 mb-8 relative z-10">
-                            <button className={`px-8 py-3 text-white rounded-[35px] font-semibold hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center gap-2 ${
+                            <Link to="/login" className={`px-8 py-3 text-white rounded-[35px] font-semibold hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl flex items-center gap-2 ${
                               isChristmasMode 
                                 ? 'bg-red-500 shadow-red-500/30 hover:shadow-red-500/50' 
                                 : 'bg-gradient-to-r from-purple-600 to-blue-600'
@@ -215,7 +216,7 @@ export default function HeroSection() {
                                   </span>
                                 )}
                                 Commencer gratuitement
-                            </button>
+                            </Link>
                         </div>
                         
                         <div className={`flex items-center gap-4 text-sm relative z-10 ${
