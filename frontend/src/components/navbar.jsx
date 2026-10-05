@@ -470,14 +470,14 @@ export default function Navbar() {
                                 <div className="space-y-2 pt-4 border-t border-white/10">
                                     <Link
                                         to="/login"
-                                        className="block rounded-lg bg-white/10 px-4 py-3 text-center text-white transition-colors hover:bg-white/20"
+                                        className="block rounded-[35px] bg-white/10 px-4 py-3 text-center text-white transition-colors hover:bg-white/20"
                                         onClick={() => setIsOpen(false)}
                                     >
                                         Connexion
                                     </Link>
                                     <Link
                                         to="/register"
-                                        className={`block rounded-lg px-4 py-3 text-center ${
+                                        className={`block rounded-[35px] px-4 py-3 text-center ${
                                             isChristmasMode 
                                                 ? 'bg-gradient-to-r from-red-600 to-green-600 hover:opacity-90' 
                                                 : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:opacity-90'
