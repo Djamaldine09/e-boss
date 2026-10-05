@@ -373,16 +373,16 @@ export default function Navbar() {
                             initial={{ y: 50, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 50, opacity: 0 }}
-                            className={`relative mx-4 w-full max-w-sm rounded-2xl glass border p-6 shadow-2xl ${
+                            className={`relative mx-4 w-full max-w-sm rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
                                 isChristmasMode
-                                    ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/30 text-white'
-                                    : 'border-gray-200/80 bg-white/95 text-gray-900 dark:border-white/10 dark:bg-gray-950/95 dark:text-white'
+                                    ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/40'
+                                    : ''
                             }`}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="absolute right-4 top-4 rounded-lg p-2 text-gray-800 transition hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
+                                className="absolute right-4 top-4 rounded-lg p-2 text-white transition hover:bg-white/10"
                             >
                                 <XIcon className="size-5" />
                             </button>
@@ -420,7 +420,7 @@ export default function Navbar() {
                                         className={`block rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10 hover:text-red-300'
-                                                : 'text-gray-900 hover:bg-black/5 dark:text-white dark:hover:bg-white/10'
+                                                : 'text-white hover:bg-white/10'
                                         }`}
                                         onClick={() => setIsOpen(false)}
                                     >
@@ -447,7 +447,7 @@ export default function Navbar() {
                                                     ? 'bg-gradient-to-r from-red-500 to-green-500 animate-pulse' 
                                                     : 'bg-white/10 group-hover:bg-red-500/20'
                                             }`}>
-                                                <TreePineIcon className={`size-5 ${isChristmasMode ? "text-white" : "text-gray-800 dark:text-white"}`} />
+                                                <TreePineIcon className="size-5 text-white" />
                                             </div>
                                             <span>Mode Noël {isChristmasMode ? '🎄 ON' : 'OFF'}</span>
                                         </div>
@@ -460,7 +460,7 @@ export default function Navbar() {
                                 {/* Bouton thème mobile */}
                                 <button
                                     onClick={toggleTheme}
-                                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-gray-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
+                                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-white transition-colors hover:bg-white/10"
                                 >
                                     <span>Thème {theme === "dark" ? "Clair" : "Sombre"}</span>
                                     {theme === "dark" ? <SunIcon className="size-5" /> : <MoonIcon className="size-5" />}
@@ -470,7 +470,7 @@ export default function Navbar() {
                                 <div className="space-y-2 pt-4 border-t border-white/10">
                                     <Link
                                         to="/login"
-                                        className="block rounded-lg bg-black/5 px-4 py-3 text-center text-gray-900 transition-colors hover:bg-black/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+                                        className="block rounded-lg bg-white/10 px-4 py-3 text-center text-white transition-colors hover:bg-white/20"
                                         onClick={() => setIsOpen(false)}
                                     >
                                         Connexion
