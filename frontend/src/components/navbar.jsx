@@ -438,7 +438,7 @@ export default function Navbar() {
                                         className={`flex w-full items-center justify-between rounded-lg px-4 py-3 transition-colors group ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10'
-                                                : 'text-gray-900 hover:bg-black/5 dark:text-white dark:hover:bg-white/10'
+                                                : 'text-white hover:bg-white/10'
                                         }`}
                                     >
                                         <div className="flex items-center space-x-3">
