@@ -382,7 +382,7 @@ export default function Navbar() {
                         >
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="absolute right-4 top-4 p-2"
+                                className="absolute right-4 top-4 rounded-lg p-2 text-gray-800 transition hover:bg-black/5 dark:text-white dark:hover:bg-white/10"
                             >
                                 <XIcon className="size-5" />
                             </button>
