@@ -250,6 +250,7 @@ const FloatingChatbot = () => {
 
   return (
     <div
+      className="floating-chatbot-window"
       style={{
         position: 'fixed',
         bottom: '20px',
