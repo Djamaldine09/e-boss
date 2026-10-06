@@ -87,10 +87,10 @@ const Messages = ({ standalone = true }) => {
         </>
       )}
 
-      <div className={`${standalone ? `pt-20 w-full max-w-full min-w-0 overflow-x-hidden px-0 sm:px-6 lg:px-8 ${sidebarOpen ? 'lg:pl-80' : ''}` : 'h-full w-full max-w-full min-w-0 overflow-x-hidden'}`}>
-        <div className={`${standalone ? 'h-[calc(100vh-5rem)]' : 'h-[calc(100vh-8rem)]'} w-full max-w-[1600px] min-w-0 mx-auto overflow-hidden rounded-none sm:rounded-2xl flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
+      <div className={`${standalone ? `pt-20 w-full max-w-full min-w-0 overflow-x-hidden px-0 sm:px-6 lg:px-8 ${sidebarOpen ? 'lg:pl-80' : ''}` : 'w-full max-w-none min-w-0 overflow-x-hidden flex justify-center'}`}>
+        <div className={`${standalone ? 'h-[calc(100dvh-5rem)]' : 'min-h-[calc(100dvh-8rem)] h-[calc(100dvh-8rem)]'} w-full max-w-[1600px] min-w-0 mx-auto overflow-hidden rounded-none sm:rounded-2xl flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
           {/* SIDEBAR GAUCHE - STYLE TEAMS */}
-          <div className={`w-full max-w-full min-w-0 lg:w-[360px] lg:shrink-0 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden lg:flex' : 'flex'} lg:h-full h-auto lg:h-auto order-2 lg:order-1`}>
+          <div className={`w-full max-w-full min-w-0 lg:w-[360px] lg:shrink-0 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden' : 'flex'} lg:flex h-full order-none`}>
             {/* Header Teams */}
             <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between mb-4">
@@ -181,7 +181,7 @@ const Messages = ({ standalone = true }) => {
           </div>
 
           {/* ZONE DE CONVERSATION - STYLE TEAMS */}
-          <div className={`flex-1 min-w-0 w-0 max-w-full flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-800/60' : 'bg-white/60'} glass order-1 lg:order-2`}>
+          <div className={`flex-1 min-w-0 w-0 max-w-full flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-800/60' : 'bg-white/60'} glass ${selectedMessage ? 'flex' : 'hidden lg:flex'} order-none`}>
             {selectedMessage ? (
               <>
                 {/* HEADER CONVERSATION */}
@@ -223,11 +223,11 @@ const Messages = ({ standalone = true }) => {
                 <div className={`flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
                   <div className="w-full max-w-5xl mx-auto space-y-5 px-0 sm:px-2 lg:px-6">
                     {/* Message reçu */}
-                    <div className="flex items-start justify-center gap-3 w-full min-w-0 px-1 sm:px-4">
+                    <div className="flex items-start gap-3 w-full min-w-0 px-0 sm:px-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${selectedMessage.color} shadow-lg`}>
                         {selectedMessage.avatar}
                       </div>
-                      <div className="flex-1 min-w-0 w-0 max-w-2xl">
+                      <div className="flex-1 min-w-0 w-0 max-w-2xl mx-auto">
                         <div className={`${theme === 'dark' ? 'bg-gray-700/80 border-gray-600/50' : 'bg-white/90 border-gray-200/50'} p-4 rounded-2xl shadow-lg backdrop-blur-sm border`}>
                           <p className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'} text-sm leading-relaxed`}>{selectedMessage.fullMessage}</p>
                         </div>
