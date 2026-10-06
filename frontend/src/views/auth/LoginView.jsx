@@ -67,7 +67,7 @@ const LoginView = () => {
   };
 
   return (
-    <Layout>
+    <Layout hideFooter>
       <div className="pt-24 pb-32 px-4 flex items-center justify-center min-h-[calc(100vh-200px)]">
         <div className="max-w-md w-full">
           <div className="glass p-8">
