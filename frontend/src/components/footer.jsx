@@ -20,8 +20,8 @@ export default function Footer() {
             <AnimatedFooter
                 className="absolute inset-0 z-0"
                 headingLines={["E-Boss"]}
-                leftImage="https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/animated-footer/hand-left.jpg"
-                rightImage="https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/animated-footer/hand-right.jpg"
+                leftImage="/animated-footer/hand-left.jpg"
+                rightImage="/animated-footer/hand-right.jpg"
                 background="transparent"
             />
 
