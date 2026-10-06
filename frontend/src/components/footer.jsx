@@ -48,8 +48,8 @@ export default function Footer() {
                 <div className="mt-auto w-full pb-10">
                     <hr className="border-black/20 dark:border-white/20" />
                     <div className="flex flex-col items-center justify-between gap-4 pt-4 text-sm text-gray-700 md:flex-row dark:text-gray-200">
-                        <p>Build Ai agents for free</p>
-                        <p>Copyright © 2025 E-Boss. All rights reservered.</p>
+                        <p className="relative -translate-y-6 md:translate-y-0">Build Ai agents for free</p>
+                        <p className="relative -translate-y-6 md:translate-y-0">Copyright © 2025 E-Boss. All rights reservered.</p>
                     </div>
                 </div>
             </div>
