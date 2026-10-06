@@ -370,10 +370,10 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                     >
                         <motion.div
-                            initial={{ y: 50, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: 50, opacity: 0 }}
-                            className={`relative mx-4 w-full max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.96 }}
+                            className={`absolute left-1/2 top-1/2 w-[calc(100%-2rem)] max-w-sm max-h-[calc(100dvh-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
                                 isChristmasMode
                                     ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/40'
                                     : ''
