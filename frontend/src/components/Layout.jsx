@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
   const { isChristmasMode } = useChristmas();
 
   return (
-    <div className="min-h-screen glass">
+    <div className="min-h-screen">
       <Navbar />
       
       {/* Background avec Blobs et Neige intégrée */}
