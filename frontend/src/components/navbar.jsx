@@ -370,10 +370,11 @@ export default function Navbar() {
                         onClick={() => setIsOpen(false)}
                     >
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.96 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.96 }}
-                            className={`absolute left-1/2 top-1/2 w-[calc(100%-2rem)] max-w-sm max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-b-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
+                            initial={{ y: "-100%", opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: "-100%", opacity: 0 }}
+                            transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                            className={`absolute inset-x-0 top-0 w-full max-h-[100dvh] overflow-y-auto rounded-b-2xl glass border-x border-b border-white/10 bg-black/85 px-6 pb-6 pt-4 text-white shadow-2xl backdrop-blur-xl ${
                                 isChristmasMode
                                     ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/40'
                                     : ''
@@ -388,7 +389,7 @@ export default function Navbar() {
                             </button>
 
                             {/* Logo dans le menu mobile */}
-                            <div className="flex justify-center pt-16 pb-2">
+                            <div className="flex justify-center pt-14 pb-4">
                                 <a href="#home" onClick={(e) => {
                                     scrollToSection(e, "#home");
                                     setIsOpen(false);
