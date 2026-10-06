@@ -211,7 +211,7 @@ export default function HeroSection() {
                             <AnimatedButton
                                 as={Link}
                                 to="/login"
-                                className={`rounded-[35px] px-8 py-3 text-white font-semibold shadow-lg hover:shadow-xl ${
+                                className={`rounded-[35px] px-8 py-3 !text-white font-semibold shadow-lg hover:shadow-xl ${
                                   isChristmasMode
                                     ? 'bg-red-500 border-red-400/40 shadow-red-500/30 hover:shadow-red-500/50'
                                     : 'bg-gradient-to-r from-purple-600 to-blue-600 border-white/20'
