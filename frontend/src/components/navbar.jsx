@@ -149,7 +149,7 @@ export default function Navbar() {
             <ConfettiAnimation trigger={showConfetti} />
             
             <motion.nav
-                className={`fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3.5 md:px-16 lg:px-24 transition-all glass backdrop-blur-lg border-b border-white/10 ${
+                className={`fixed top-0 z-50 flex w-full items-center justify-between px-4 py-3.5 md:px-16 lg:px-24 transition-all glass rounded-none backdrop-blur-lg border-b border-white/10 ${
                     isChristmasMode ? 'christmas-nav' : ''
                 }`}
                 initial={{ y: 0, opacity: 1 }}
