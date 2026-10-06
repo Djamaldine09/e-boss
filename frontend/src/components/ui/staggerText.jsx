@@ -23,7 +23,12 @@ const item = {
   },
 };
 
-const TextAnimation = ({ children, delay = 0, divideBy = "word" }) => {
+const TextAnimation = ({
+  children,
+  delay = 0,
+  divideBy = "word",
+  textClassName = "",
+}) => {
   if (typeof children !== "string") {
     if (typeof children === "number" || typeof children === "boolean") {
       children = String(children);
@@ -51,7 +56,10 @@ const TextAnimation = ({ children, delay = 0, divideBy = "word" }) => {
           className="inline-block overflow-hidden relative"
           style={{ verticalAlign: "top" }}
         >
-          <motion.span variants={item} className="inline-block will-change-transform">
+          <motion.span
+            variants={item}
+            className={`inline-block will-change-transform ${textClassName}`}
+          >
             {divideBy === "letter" ? (part === " " ? " " : part) : part + " "}
           </motion.span>
         </span>
