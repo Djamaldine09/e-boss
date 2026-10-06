@@ -191,7 +191,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen glass">
+    <div className="min-h-screen">
       <DashboardNavbar onSidebarToggle={toggleSidebar} sidebarOpen={sidebarOpen} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
