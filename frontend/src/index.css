@@ -46,6 +46,11 @@ body:not(.dark) .glass {
   border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* Dashboard navbar: full-width, flush to viewport edges */
+.dashboard-navbar {
+  border-radius: 0 !important;
+}
+
 /* Button */
 .btn {
   cursor: pointer;
