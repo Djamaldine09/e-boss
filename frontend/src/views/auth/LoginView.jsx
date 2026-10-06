@@ -151,7 +151,7 @@ const LoginView = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-blue-400 disabled:cursor-not-allowed"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-[35px] hover:bg-blue-700 transition-colors font-medium disabled:bg-blue-400 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Connexion en cours...' : 'Se connecter'}
               </button>
