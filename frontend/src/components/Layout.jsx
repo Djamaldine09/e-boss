@@ -5,7 +5,7 @@ import SnowLayer from './snow-layer';
 import { useTheme } from '../context/theme-context';
 import { useChristmas } from '../context/christmas-context';
 
-const Layout = ({ children, hideFooter = false }) => {
+const Layout = ({ children, hideFooter = false, hideSnow = false }) => {
   const { theme } = useTheme();
   const { isChristmasMode } = useChristmas();
 
@@ -42,7 +42,7 @@ const Layout = ({ children, hideFooter = false }) => {
         )}
         
         {/* La couche de neige par-dessus les blobs mais sous le texte */}
-        <SnowLayer />
+        {!hideSnow && <SnowLayer />}
       </div>
       
       <main className="pt-16">
