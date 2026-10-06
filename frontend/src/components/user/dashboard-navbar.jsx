@@ -85,7 +85,7 @@ const DashboardNavbar = ({ onSidebarToggle, sidebarOpen }) => {
   return (
     <>
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 flex h-20 items-center justify-between px-3 sm:px-6 lg:px-8 rounded-none transition-all ${
+        className={`fixed top-0 left-0 right-0 z-50 flex h-20 items-center justify-between px-3 sm:px-6 lg:px-8 dashboard-navbar rounded-none transition-all ${
           theme === 'dark' 
             ? 'glass backdrop-blur-lg border-b border-white/10' 
             : 'glass backdrop-blur-lg border-b border-gray-200/50'
