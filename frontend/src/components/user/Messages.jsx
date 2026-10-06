@@ -181,7 +181,7 @@ const Messages = ({ standalone = true }) => {
           </div>
 
           {/* ZONE DE CONVERSATION - STYLE TEAMS */}
-          <div className={`flex-1 flex flex-col ${theme === 'dark' ? 'bg-gray-800/60' : 'bg-white/60'} glass order-1 lg:order-2`}>
+          <div className={`flex-1 min-w-0 w-full flex flex-col overflow-hidden ${theme === 'dark' ? 'bg-gray-800/60' : 'bg-white/60'} glass order-1 lg:order-2`}>
             {selectedMessage ? (
               <>
                 {/* HEADER CONVERSATION */}
@@ -220,7 +220,7 @@ const Messages = ({ standalone = true }) => {
                 </div>
 
                 {/* ZONE DES MESSAGES */}
-                <div className={`flex-1 overflow-y-auto ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
+                <div className={`flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
                   <div className="w-full max-w-4xl mx-auto space-y-4 px-1 sm:px-2">
                     {/* Message reçu */}
                     <div className="flex items-start space-x-3">
@@ -261,8 +261,8 @@ const Messages = ({ standalone = true }) => {
 
                 {/* ZONE DE RÉPONSE */}
                 <div className={`border-t p-3 sm:p-4 ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
-                  <div className="flex items-end space-x-2 sm:space-x-3">
-                    <div className="flex-1 flex items-center space-x-1 sm:space-x-2 border rounded-lg px-3 py-2 sm:px-4 sm:py-2 bg-transparent">
+                  <div className="flex items-end space-x-2 sm:space-x-3 w-full min-w-0">
+                    <div className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 border rounded-lg px-3 py-2 sm:px-4 sm:py-2 bg-transparent">
                       <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
                         <Paperclip className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
                       </button>
