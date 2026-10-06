@@ -4,7 +4,6 @@ import { useChristmas } from "../context/christmas-context";
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Lottie from 'lottie-react';
-import FlipText from '../components/ui/flip-text';
 
 // Importez vos animations Lottie
 import snowAnimation from '../animation/noel.json';
@@ -181,14 +180,7 @@ export default function HeroSection() {
                               </span>
                             )}
                             
-                            <FlipText
-                              className={theme === 'dark' ? 'text-white' : 'text-black'}
-                              duration={2.4}
-                              delay={0.15}
-                              loop={true}
-                            >
-                              Apprendre avec
-                            </FlipText>{' '}
+                            Apprendre avec{' '}
                             <span className={`bg-gradient-to-r ${
                               isChristmasMode 
                                 ? 'from-red-500 via-green-500 to-yellow-500' 
