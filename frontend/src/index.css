@@ -226,3 +226,15 @@ body:not(.dark) .btn:hover {
 .special-christmas-offer {
   animation: banner-glow 2s ease-in-out infinite;
 }
+
+
+/* Chatbot: keep the floating window fully visible and centered on small screens */
+@media (max-width: 640px) {
+  .floating-chatbot-window {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    box-sizing: border-box;
+  }
+}
