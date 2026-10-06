@@ -231,11 +231,12 @@ const Dashboard = () => {
         <SnowLayer />
       </div>
       
-      <main className={`pt-24 pb-32 px-6 transition-all duration-300 ${
-        sidebarOpen ? 'lg:ml-72' : 'lg:ml-0'
-      }`}>
-        <div className="max-w-7xl mx-auto">
+      <main className={`pt-24 pb-32 transition-all duration-300 ${
+        currentSection === 'messages' ? 'px-0' : 'px-6'
+      } ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`}>
+        <div className={currentSection === 'messages' ? 'w-full max-w-none mx-0' : 'max-w-7xl mx-auto'}>
           <motion.div
+            className="w-full min-w-0"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
