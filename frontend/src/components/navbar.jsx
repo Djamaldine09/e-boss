@@ -366,15 +366,14 @@ export default function Navbar() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md md:hidden"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm md:hidden"
                         onClick={() => setIsOpen(false)}
                     >
                         <motion.div
-                            initial={{ y: "-100%", opacity: 0 }}
+                            initial={{ y: 50, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: "-100%", opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                            className={`absolute inset-x-0 top-0 w-full max-h-[100dvh] overflow-y-auto rounded-b-2xl glass border-x border-b border-white/10 bg-black/85 px-6 pb-6 pt-4 text-white shadow-2xl backdrop-blur-xl ${
+                            exit={{ y: 50, opacity: 0 }}
+                            className={`relative mx-4 w-full max-w-sm rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
                                 isChristmasMode
                                     ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/40'
                                     : ''
@@ -389,7 +388,7 @@ export default function Navbar() {
                             </button>
 
                             {/* Logo dans le menu mobile */}
-                            <div className="flex justify-center pt-14 pb-4">
+                            <div className="flex justify-center mb-6">
                                 <a href="#home" onClick={(e) => {
                                     scrollToSection(e, "#home");
                                     setIsOpen(false);
@@ -413,12 +412,12 @@ export default function Navbar() {
                                 </a>
                             </div>
 
-                            <div className="mt-2 space-y-3">
+                            <div className="mt-4 space-y-4">
                                 {links.map((link) => (
                                     <Link
                                         key={link.name}
                                         to={link.href}
-                                        className={`block rounded-lg px-4 py-3 text-center text-lg font-medium transition-colors ${
+                                        className={`block rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10 hover:text-red-300'
                                                 : 'text-white hover:bg-white/10'
@@ -436,7 +435,7 @@ export default function Navbar() {
                                             handleChristmasModeToggle();
                                             setIsOpen(false);
                                         }}
-                                        className={`flex w-full items-center justify-center rounded-lg px-4 py-3 text-center transition-colors group ${
+                                        className={`flex w-full items-center justify-between rounded-lg px-4 py-3 transition-colors group ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10'
                                                 : 'text-white hover:bg-white/10'
@@ -461,14 +460,14 @@ export default function Navbar() {
                                 {/* Bouton thème mobile */}
                                 <button
                                     onClick={toggleTheme}
-                                    className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-center text-white transition-colors hover:bg-white/10"
+                                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-white transition-colors hover:bg-white/10"
                                 >
                                     <span>Thème {theme === "dark" ? "Clair" : "Sombre"}</span>
                                     {theme === "dark" ? <SunIcon className="size-5" /> : <MoonIcon className="size-5" />}
                                 </button>
 
                                 {/* Login/Register mobile */}
-                                <div className="space-y-2 pt-3 border-t border-white/10">
+                                <div className="space-y-2 pt-4 border-t border-white/10">
                                     <Link
                                         to="/login"
                                         className="block rounded-[35px] bg-white/10 px-4 py-3 text-center text-white transition-colors hover:bg-white/20"
