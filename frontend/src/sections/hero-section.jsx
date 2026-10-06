@@ -12,7 +12,6 @@ import snowAnimation from '../animation/noel.json';
 
 
 
-
 // Animation par défaut si vous n'avez pas les fichiers
 const defaultSnowAnimation = {
   // JSON minimal pour la neige
@@ -64,7 +63,6 @@ const LottieSnow = () => {
 const LottieSanta = () => {
   const [animationData, setAnimationData] = useState(null);
   
-  
 
   if (!animationData) return null;
 
@@ -100,7 +98,6 @@ const LottieChristmasLights = () => {
 // Composant Lottie pour les flocons de neige
 const LottieSnowflakes = () => {
   const [animationData, setAnimationData] = useState(null);
-  
   
 
   if (!animationData) return null;
@@ -148,7 +145,7 @@ export default function HeroSection() {
               theme === 'dark' ? 'bg-[#4C1D95]' : 'bg-[#E91E63]'
             }`} />
             <div className={`absolute rounded-full top-80 right-0 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
-              theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF]'
+              theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF'
             }`} />
             <div className={`absolute rounded-full top-0 left-1/2 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
               theme === 'dark' ? 'bg-[#7C3AED]' : 'bg-[#F26A06]'
@@ -182,20 +179,27 @@ export default function HeroSection() {
                             )}
                             
                             <TextAnimation divideBy="word" delay={0.1}>
-                                Apprendre avec l'IA
-                            </TextAnimation>
-                            <br />
+                                Apprendre avec
+                            </TextAnimation>{' '}
                             <span className={`bg-gradient-to-r ${
-                              isChristmasMode ? 'from-red-500 via-green-500 to-yellow-500' : theme === 'dark' ? 'from-purple-400 to-blue-400' : 'from-purple-600 to-blue-600'
+                              isChristmasMode
+                                ? 'from-red-500 via-green-500 to-yellow-500'
+                                : theme === 'dark'
+                                  ? 'from-purple-400 to-blue-400'
+                                  : 'from-purple-600 to-blue-600'
                             } bg-clip-text text-transparent`}>
                                 <TextAnimation divideBy="word" delay={0.35}>
-                                    en toute sécurité
+                                    l'IA
                                 </TextAnimation>
                             </span>
+                            <br />
+                            <TextAnimation divideBy="word" delay={0.5}>
+                                en toute sécurité
+                            </TextAnimation>
                         </h1>
                         
                         <p className="text-xl mb-8 max-w-2xl relative z-10 !text-white">
-                            <TextAnimation divideBy="word" delay={0.6}>
+                            <TextAnimation divideBy="word" delay={0.65}>
                                 Notre plateforme éducative intelligente détecte la désinformation, analyse le contenu toxique, sécurise les examens et évalue la fiabilité des sources en temps réel.
                             </TextAnimation>
                         </p>
