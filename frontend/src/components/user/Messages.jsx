@@ -87,10 +87,10 @@ const Messages = ({ standalone = true }) => {
         </>
       )}
 
-      <div className={`${standalone ? 'pt-16 w-full min-w-0' : 'h-full w-full min-w-0'}`}>
-        <div className={`${standalone ? 'h-[calc(100vh-4rem)]' : 'h-[calc(100vh-8rem)]'} flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
+      <div className={`${standalone ? `pt-20 w-full min-w-0 px-3 sm:px-6 lg:px-8 ${sidebarOpen ? 'lg:pl-80' : ''}` : 'h-full w-full min-w-0'}`}>
+        <div className={`${standalone ? 'h-[calc(100vh-5rem)]' : 'h-[calc(100vh-8rem)]'} w-full max-w-[1600px] mx-auto overflow-hidden rounded-2xl flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
           {/* SIDEBAR GAUCHE - STYLE TEAMS */}
-          <div className={`w-full lg:w-80 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden lg:flex' : 'flex'} lg:h-full h-auto lg:h-auto order-2 lg:order-1`}>
+          <div className={`w-full lg:w-[360px] lg:shrink-0 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden lg:flex' : 'flex'} lg:h-full h-auto lg:h-auto order-2 lg:order-1`}>
             {/* Header Teams */}
             <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between mb-4">
