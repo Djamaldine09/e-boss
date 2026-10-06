@@ -5,7 +5,7 @@ import SnowLayer from './snow-layer';
 import { useTheme } from '../context/theme-context';
 import { useChristmas } from '../context/christmas-context';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, hideFooter = false }) => {
   const { theme } = useTheme();
   const { isChristmasMode } = useChristmas();
 
@@ -49,7 +49,7 @@ const Layout = ({ children }) => {
         {children}
       </main>
       
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 };
