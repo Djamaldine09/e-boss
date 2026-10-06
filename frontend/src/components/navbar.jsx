@@ -417,7 +417,7 @@ export default function Navbar() {
                                     <Link
                                         key={link.name}
                                         to={link.href}
-                                        className={`block rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
+                                        className={`block rounded-lg px-4 py-3 text-center text-lg font-medium transition-colors ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10 hover:text-red-300'
                                                 : 'text-white hover:bg-white/10'
@@ -435,7 +435,7 @@ export default function Navbar() {
                                             handleChristmasModeToggle();
                                             setIsOpen(false);
                                         }}
-                                        className={`flex w-full items-center justify-between rounded-lg px-4 py-3 transition-colors group ${
+                                        className={`flex w-full items-center justify-center rounded-lg px-4 py-3 text-center transition-colors group ${
                                             isChristmasMode
                                                 ? 'text-white hover:bg-white/10'
                                                 : 'text-white hover:bg-white/10'
@@ -460,7 +460,7 @@ export default function Navbar() {
                                 {/* Bouton thème mobile */}
                                 <button
                                     onClick={toggleTheme}
-                                    className="flex w-full items-center justify-between rounded-lg px-4 py-3 text-white transition-colors hover:bg-white/10"
+                                    className="flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-center text-white transition-colors hover:bg-white/10"
                                 >
                                     <span>Thème {theme === "dark" ? "Clair" : "Sombre"}</span>
                                     {theme === "dark" ? <SunIcon className="size-5" /> : <MoonIcon className="size-5" />}
