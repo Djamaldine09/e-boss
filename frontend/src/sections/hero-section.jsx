@@ -145,7 +145,7 @@ export default function HeroSection() {
               theme === 'dark' ? 'bg-[#4C1D95]' : 'bg-[#E91E63]'
             }`} />
             <div className={`absolute rounded-full top-80 right-0 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
-              theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF'
+              theme === 'dark' ? 'bg-[#1E3A8A]' : 'bg-[#2E08CF]'
             }`} />
             <div className={`absolute rounded-full top-0 left-1/2 -translate-x-1/2 size-130 blur-[100px] opacity-50 ${
               theme === 'dark' ? 'bg-[#7C3AED]' : 'bg-[#F26A06]'
