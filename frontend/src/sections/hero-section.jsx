@@ -3,6 +3,7 @@ import { useTheme } from '../context/theme-context';
 import { useChristmas } from "../context/christmas-context";
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import TextAnimation from '../components/ui/staggerText';
 import Lottie from 'lottie-react';
 
 // Importez vos animations Lottie
@@ -180,28 +181,23 @@ export default function HeroSection() {
                               </span>
                             )}
                             
-                            Apprendre avec{' '}
-                            <span className={`bg-gradient-to-r ${
-                              isChristmasMode 
-                                ? 'from-red-500 via-green-500 to-yellow-500' 
-                                : theme === 'dark' 
-                                    ? 'from-purple-400 to-blue-400' 
-                                    : 'from-purple-600 to-blue-600'
-                            } bg-clip-text text-transparent`}>
-                                l'IA
-                            </span>
+                            <TextAnimation divideBy="word" delay={0.1}>
+                                Apprendre avec l'IA
+                            </TextAnimation>
                             <br />
-                            en toute sécurité
+                            <span className={`bg-gradient-to-r ${
+                              isChristmasMode ? 'from-red-500 via-green-500 to-yellow-500' : theme === 'dark' ? 'from-purple-400 to-blue-400' : 'from-purple-600 to-blue-600'
+                            } bg-clip-text text-transparent`}>
+                                <TextAnimation divideBy="word" delay={0.35}>
+                                    en toute sécurité
+                                </TextAnimation>
+                            </span>
                         </h1>
                         
-                        <p className={`text-xl mb-8 max-w-2xl relative z-10 ${
-                          isChristmasMode 
-                            ? '!text-white' 
-                            : '!text-white'
-                        }`}>
-                            Notre plateforme éducative intelligente détecte la désinformation, 
-                            analyse le contenu toxique, sécurise les examens et évalue la 
-                            fiabilité des sources en temps réel.
+                        <p className="text-xl mb-8 max-w-2xl relative z-10 !text-white">
+                            <TextAnimation divideBy="word" delay={0.6}>
+                                Notre plateforme éducative intelligente détecte la désinformation, analyse le contenu toxique, sécurise les examens et évalue la fiabilité des sources en temps réel.
+                            </TextAnimation>
                         </p>
                         
                         <div className="flex flex-col sm:flex-row gap-4 mb-8 relative z-10">
