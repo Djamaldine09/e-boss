@@ -543,7 +543,7 @@ export function AnimatedFooter({
       {children ? <div className="relative z-20 flex min-h-full flex-col">{children}</div> : null}
 
       {/* Display headings */}
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 p-8">
+      <div className="absolute inset-x-0 bottom-10 flex items-end justify-center gap-4 p-8 md:bottom-0">
         {headingLines.map((word, wi) => (
           <h2
             key={`${word}-${wi}`}
