@@ -181,17 +181,19 @@ export default function HeroSection() {
                             <TextAnimation divideBy="word" delay={0.1}>
                                 Apprendre avec
                             </TextAnimation>{' '}
-                            <span className={`bg-gradient-to-r ${
-                              isChristmasMode
-                                ? 'from-red-500 via-green-500 to-yellow-500'
-                                : theme === 'dark'
-                                  ? 'from-purple-400 to-blue-400'
-                                  : 'from-purple-600 to-blue-600'
-                            } bg-clip-text text-transparent`}>
-                                <TextAnimation divideBy="word" delay={0.35}>
-                                    l'IA
-                                </TextAnimation>
-                            </span>
+                            <TextAnimation
+                                divideBy="word"
+                                delay={0.35}
+                                textClassName={`bg-gradient-to-r ${
+                                  isChristmasMode
+                                    ? 'from-red-500 via-green-500 to-yellow-500'
+                                    : theme === 'dark'
+                                      ? 'from-purple-400 to-blue-400'
+                                      : 'from-purple-600 to-blue-600'
+                                } bg-clip-text text-transparent`}
+                            >
+                                l'IA
+                            </TextAnimation>
                             <br />
                             <TextAnimation divideBy="word" delay={0.5}>
                                 en toute sécurité
