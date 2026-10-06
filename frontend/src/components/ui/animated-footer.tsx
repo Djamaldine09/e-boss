@@ -91,6 +91,8 @@ export interface AnimatedFooterProps {
    */
   revealed?: boolean;
 
+  /** Optional overlay content rendered above the animation. */
+  children?: React.ReactNode;
   /** Extra class names for the root element. */
   className?: string;
 }
@@ -223,6 +225,7 @@ export function AnimatedFooter({
   hoverRadius = 8,
   revealOnScroll = true,
   revealed,
+  children,
   className,
 }: AnimatedFooterProps) {
   const rootRef = useRef<HTMLElement>(null);
@@ -536,6 +539,8 @@ export function AnimatedFooter({
           <canvas ref={rightCanvasRef} className="block h-auto w-full" />
         </div>
       </div>
+
+      {children ? <div className="relative z-20 flex min-h-full flex-col">{children}</div> : null}
 
       {/* Display headings */}
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-center gap-4 p-8">
