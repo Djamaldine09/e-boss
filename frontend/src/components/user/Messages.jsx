@@ -221,7 +221,7 @@ const Messages = ({ standalone = true }) => {
 
                 {/* ZONE DES MESSAGES */}
                 <div className={`flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
-                  <div className="w-full max-w-4xl mx-auto space-y-4 px-1 sm:px-2">
+                  <div className="w-full max-w-5xl mx-auto space-y-5 px-0 sm:px-2 lg:px-6">
                     {/* Message reçu */}
                     <div className="flex items-start space-x-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${selectedMessage.color} shadow-lg`}>
@@ -237,7 +237,7 @@ const Messages = ({ standalone = true }) => {
 
                     {/* Réponses envoyées */}
                     {replies.map((reply) => (
-                      <div key={reply.id} className="flex items-start space-x-3 justify-end">
+                      <div key={reply.id} className="flex items-start space-x-3 w-full justify-center px-2 sm:px-4">
                         <div className="max-w-[min(42rem,85%)] min-w-0">
                           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm">
                             <p className="text-sm leading-relaxed">{reply.text}</p>
