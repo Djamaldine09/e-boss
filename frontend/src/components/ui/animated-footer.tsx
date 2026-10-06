@@ -208,8 +208,8 @@ function getScrollParent(node: HTMLElement | null): HTMLElement | null {
 
 export function AnimatedFooter({
   headingLines = ["VengeanceUI"],
-  leftImage = "https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/animated-footer/hand-left.jpg",
-  rightImage = "https://raw.githubusercontent.com/Ashutoshx7/VengeanceUI/main/public/animated-footer/hand-right.jpg",
+  leftImage = "/animated-footer/hand-left.jpg",
+  rightImage = "/animated-footer/hand-right.jpg",
   background,
   textColor,
   charColor,
