@@ -223,11 +223,11 @@ const Messages = ({ standalone = true }) => {
                 <div className={`flex-1 min-w-0 w-full overflow-y-auto overflow-x-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
                   <div className="w-full max-w-5xl mx-auto space-y-5 px-0 sm:px-2 lg:px-6">
                     {/* Message reçu */}
-                    <div className="flex items-start justify-center space-x-3 w-full px-2 sm:px-4">
+                    <div className="flex items-start justify-center gap-3 w-full min-w-0 px-1 sm:px-4">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${selectedMessage.color} shadow-lg`}>
                         {selectedMessage.avatar}
                       </div>
-                      <div className="w-full max-w-[min(42rem,85%)] min-w-0">
+                      <div className="flex-1 min-w-0 w-0 max-w-2xl">
                         <div className={`${theme === 'dark' ? 'bg-gray-700/80 border-gray-600/50' : 'bg-white/90 border-gray-200/50'} p-4 rounded-2xl shadow-lg backdrop-blur-sm border`}>
                           <p className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'} text-sm leading-relaxed`}>{selectedMessage.fullMessage}</p>
                         </div>
@@ -237,8 +237,8 @@ const Messages = ({ standalone = true }) => {
 
                     {/* Réponses envoyées */}
                     {replies.map((reply) => (
-                      <div key={reply.id} className="flex items-start space-x-3 w-full justify-center px-2 sm:px-4">
-                        <div className="max-w-[min(42rem,85%)] min-w-0">
+                      <div key={reply.id} className="flex items-start justify-center gap-3 w-full min-w-0 px-1 sm:px-4">
+                        <div className="flex-1 min-w-0 w-0 max-w-2xl">
                           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm">
                             <p className="text-sm leading-relaxed">{reply.text}</p>
                           </div>
