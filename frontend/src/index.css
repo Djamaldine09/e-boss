@@ -270,6 +270,7 @@ body:not(.dark) .btn:hover {
 .flip-char::before {
   transform: translate(-50%, -50%) rotateX(-90deg) translateZ(0.5em);
   opacity: 0;
+  --opacity: 1;
 }
 
 @keyframes flip-text-rotate {
