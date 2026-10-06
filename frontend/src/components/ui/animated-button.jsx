@@ -26,7 +26,7 @@ const AnimatedButton = ({
         mass: 0.5,
       }}
       className={[
-        "group inline-flex items-center justify-center px-6 py-2 rounded-md relative overflow-hidden bg-background border border-border",
+        "group inline-flex items-center justify-center px-6 py-2 rounded-[35px] relative overflow-hidden bg-background border border-border",
         "text-foreground font-medium transition-colors duration-[var(--vng-transition-speed,150ms)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
         "[--shine:rgba(0,0,0,.66)] dark:[--shine:rgba(255,255,255,.66)]",
         className,
@@ -53,7 +53,7 @@ const AnimatedButton = ({
       </motion.span>
 
       <motion.span
-        className="block absolute inset-0 rounded-md p-px"
+        className="block absolute inset-0 rounded-[35px] p-px"
         style={{
           background:
             "linear-gradient(-75deg, transparent 30%, var(--shine) 50%, transparent 70%)",
