@@ -152,7 +152,7 @@ const Messages = ({ standalone = true }) => {
                         : 'hover:bg-gray-50/50 border-gray-100/50'
                   }`}
                 >
-                  <div className="flex items-start space-x-3">
+                  <div className="flex items-start space-x-3 w-full">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${message.color} shadow-md ${selectedMessage?.id === message.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}>
                       {message.avatar}
                     </div>
@@ -221,13 +221,13 @@ const Messages = ({ standalone = true }) => {
 
                 {/* ZONE DES MESSAGES */}
                 <div className={`flex-1 overflow-y-auto ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'} p-3 sm:p-6`}>
-                  <div className="space-y-4">
+                  <div className="w-full max-w-4xl mx-auto space-y-4 px-1 sm:px-2">
                     {/* Message reçu */}
                     <div className="flex items-start space-x-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${selectedMessage.color} shadow-lg`}>
                         {selectedMessage.avatar}
                       </div>
-                      <div className="max-w-lg">
+                      <div className="max-w-[min(42rem,85%)] min-w-0">
                         <div className={`${theme === 'dark' ? 'bg-gray-700/80 border-gray-600/50' : 'bg-white/90 border-gray-200/50'} p-4 rounded-2xl shadow-lg backdrop-blur-sm border`}>
                           <p className={`${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'} text-sm leading-relaxed`}>{selectedMessage.fullMessage}</p>
                         </div>
@@ -238,7 +238,7 @@ const Messages = ({ standalone = true }) => {
                     {/* Réponses envoyées */}
                     {replies.map((reply) => (
                       <div key={reply.id} className="flex items-start space-x-3 justify-end">
-                        <div className="max-w-lg">
+                        <div className="max-w-[min(42rem,85%)] min-w-0">
                           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-2xl shadow-lg backdrop-blur-sm">
                             <p className="text-sm leading-relaxed">{reply.text}</p>
                           </div>
