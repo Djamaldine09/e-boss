@@ -373,7 +373,7 @@ export default function Navbar() {
                             initial={{ y: 50, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: 50, opacity: 0 }}
-                            className={`relative mx-4 w-full max-w-sm rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
+                            className={`relative mx-4 w-full max-w-sm -translate-y-8 rounded-2xl glass border border-white/10 bg-black/85 p-6 text-white shadow-2xl backdrop-blur-xl ${
                                 isChristmasMode
                                     ? 'border-red-500/30 bg-gradient-to-b from-gray-900/95 to-red-900/40'
                                     : ''
@@ -388,7 +388,7 @@ export default function Navbar() {
                             </button>
 
                             {/* Logo dans le menu mobile */}
-                            <div className="flex justify-center mb-6">
+                            <div className="flex justify-center mb-4">
                                 <a href="#home" onClick={(e) => {
                                     scrollToSection(e, "#home");
                                     setIsOpen(false);
@@ -412,7 +412,7 @@ export default function Navbar() {
                                 </a>
                             </div>
 
-                            <div className="mt-4 space-y-4">
+                            <div className="mt-2 space-y-3">
                                 {links.map((link) => (
                                     <Link
                                         key={link.name}
@@ -467,7 +467,7 @@ export default function Navbar() {
                                 </button>
 
                                 {/* Login/Register mobile */}
-                                <div className="space-y-2 pt-4 border-t border-white/10">
+                                <div className="space-y-2 pt-3 border-t border-white/10">
                                     <Link
                                         to="/login"
                                         className="block rounded-[35px] bg-white/10 px-4 py-3 text-center text-white transition-colors hover:bg-white/20"
