@@ -233,7 +233,7 @@ const Dashboard = () => {
       
       <main className={`transition-all duration-300 ${
         currentSection === 'messages'
-          ? 'min-h-[100dvh] pt-20 pb-6 px-0 flex items-center justify-center overflow-x-hidden'
+          ? 'min-h-[100dvh] pt-20 pb-6 px-2 sm:px-4 flex items-center justify-center overflow-x-hidden'
           : `pt-24 pb-32 px-6 ${sidebarOpen ? 'lg:ml-72' : 'lg:ml-0'}`
       }`}>
         <div className={currentSection === 'messages' ? 'w-full max-w-none mx-0' : 'max-w-7xl mx-auto'}>
