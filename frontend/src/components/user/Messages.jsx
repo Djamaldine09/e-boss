@@ -90,7 +90,7 @@ const Messages = ({ standalone = true }) => {
       <div className={`${standalone ? `pt-20 w-full max-w-full min-w-0 overflow-x-hidden px-0 sm:px-6 lg:px-8 ${sidebarOpen ? 'lg:pl-80' : ''}` : 'w-full max-w-none min-w-0 overflow-x-hidden flex justify-center'}`}>
         <div className={`${standalone ? 'h-[calc(100dvh-5rem)]' : 'min-h-[calc(100dvh-8rem)] h-[calc(100dvh-8rem)]'} w-full max-w-[1600px] min-w-0 mx-auto overflow-hidden rounded-none sm:rounded-2xl flex flex-col lg:flex-row ${theme === 'dark' ? 'bg-gray-900/80' : 'bg-gray-50/80'}`}>
           {/* SIDEBAR GAUCHE - STYLE TEAMS */}
-          <div className={`w-[calc(100%-12px)] max-w-[calc(100%-12px)] min-w-0 ml-3 mr-0 lg:ml-0 lg:mr-0 lg:w-[360px] lg:max-w-none lg:shrink-0 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden' : 'flex'} lg:flex h-full order-none`}>
+          <div className={`w-[calc(100%-16px)] max-w-[calc(100%-16px)] min-w-0 ml-4 mr-0 lg:ml-0 lg:mr-0 lg:w-[360px] lg:max-w-none lg:shrink-0 ${theme === 'dark' ? 'bg-gray-800/60 border-gray-700/60' : 'bg-white/60 border-gray-200/60'} border-r lg:border-r-0 border-b lg:border-b flex flex-col glass ${selectedMessage ? 'hidden' : 'flex'} lg:flex h-full order-none`}>
             {/* Header Teams */}
             <div className={`p-4 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between mb-4">
