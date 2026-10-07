@@ -262,7 +262,7 @@ const Messages = ({ standalone = true }) => {
                 {/* ZONE DE RÉPONSE */}
                 <div className={`border-t p-3 sm:p-4 ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
                   <div className="flex items-end space-x-2 sm:space-x-3 w-full min-w-0">
-                    <div className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 border rounded-lg px-3 py-2 sm:px-4 sm:py-2 bg-transparent">
+                    <div className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 h-[35px] border rounded-lg px-3 sm:px-4 bg-transparent">
                       <button className={`p-2 ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
                         <Paperclip className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
                       </button>
@@ -270,7 +270,7 @@ const Messages = ({ standalone = true }) => {
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Tapez un message..."
-                        className={`flex-1 py-2 px-1 bg-transparent resize-none focus:outline-none text-sm max-h-32 ${theme === 'dark' ? 'text-white placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
+                        className={`flex-1 h-[31px] py-1 px-1 bg-transparent resize-none focus:outline-none text-sm max-h-32 ${theme === 'dark' ? 'text-white placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
                         rows={1}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
@@ -286,7 +286,7 @@ const Messages = ({ standalone = true }) => {
                     <button
                       onClick={handleSend}
                       disabled={!replyText.trim()}
-                      className={`p-2 rounded-lg transition-colors ${
+                      className={`h-[35px] w-[35px] p-0 flex items-center justify-center rounded-lg transition-colors ${
                         replyText.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                           : theme === 'dark' ? 'bg-gray-700 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
