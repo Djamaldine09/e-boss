@@ -262,7 +262,7 @@ const Messages = ({ standalone = true }) => {
                 {/* ZONE DE RÉPONSE */}
                 <div className={`border-t p-3 sm:p-4 ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
                   <div className="flex items-center space-x-2 sm:space-x-3 w-full min-w-0">
-                    <div style={{ borderRadius: "35px" }} className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 h-[35px] min-h-[35px] max-h-[35px] border px-2 sm:px-3 bg-transparent overflow-hidden">
+                    <div style={{ borderRadius: "35px" }} className={`flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 h-[44px] min-h-[44px] border px-2 sm:px-3 overflow-hidden ${theme === 'dark' ? 'bg-gray-700/70 border-gray-600' : 'bg-gray-100 border-gray-300'}`}>
                       <button className={`h-[31px] w-[31px] p-0 shrink-0 flex items-center justify-center ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
                         <Paperclip className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
                       </button>
@@ -270,7 +270,7 @@ const Messages = ({ standalone = true }) => {
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Tapez un message..."
-                        className={`flex-1 min-w-0 h-[31px] min-h-[31px] max-h-[31px] py-1 px-1 bg-transparent resize-none focus:outline-none text-sm ${theme === 'dark' ? 'text-white placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
+                        style={{ borderRadius: "35px" }} className={`flex-1 min-w-0 h-[34px] min-h-[34px] max-h-[34px] py-1 px-1 bg-transparent resize-none focus:outline-none text-sm ${theme === 'dark' ? 'text-white placeholder-gray-400' : 'text-gray-900 placeholder-gray-500'}`}
                         rows={1}
                         onKeyPress={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
@@ -287,7 +287,7 @@ const Messages = ({ standalone = true }) => {
                       onClick={handleSend}
                       disabled={!replyText.trim()}
                       style={{ borderRadius: "35px" }}
-                      className={`h-[35px] min-h-[35px] max-h-[35px] w-[35px] min-w-[35px] p-0 shrink-0 flex items-center justify-center transition-colors ${
+                      className={`h-[44px] min-h-[44px] w-[44px] min-w-[44px] p-0 shrink-0 flex items-center justify-center transition-colors ${
                         replyText.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                           : theme === 'dark' ? 'bg-gray-700 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
