@@ -262,7 +262,7 @@ const Messages = ({ standalone = true }) => {
                 {/* ZONE DE RÉPONSE */}
                 <div className={`border-t p-3 sm:p-4 ${theme === 'dark' ? 'border-gray-700/60 bg-gray-800/60' : 'border-gray-200/60 bg-white/60'}`}>
                   <div className="flex items-center space-x-2 sm:space-x-3 w-full min-w-0">
-                    <div className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 h-[35px] min-h-[35px] max-h-[35px] border rounded-[35px] px-2 sm:px-3 bg-transparent overflow-hidden">
+                    <div style={{ borderRadius: "35px" }} className="flex-1 min-w-0 flex items-center space-x-1 sm:space-x-2 h-[35px] min-h-[35px] max-h-[35px] border px-2 sm:px-3 bg-transparent overflow-hidden">
                       <button className={`h-[31px] w-[31px] p-0 shrink-0 flex items-center justify-center ${theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-200'} transition-colors rounded-lg`}>
                         <Paperclip className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`} />
                       </button>
@@ -286,7 +286,7 @@ const Messages = ({ standalone = true }) => {
                     <button
                       onClick={handleSend}
                       disabled={!replyText.trim()}
-                      className={`h-[35px] min-h-[35px] max-h-[35px] w-[35px] min-w-[35px] p-0 shrink-0 flex items-center justify-center rounded-[35px] transition-colors ${
+                      style={{ borderRadius: "35px" }}\n                      className={`h-[35px] min-h-[35px] max-h-[35px] w-[35px] min-w-[35px] p-0 shrink-0 flex items-center justify-center transition-colors ${
                         replyText.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                           : theme === 'dark' ? 'bg-gray-700 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
