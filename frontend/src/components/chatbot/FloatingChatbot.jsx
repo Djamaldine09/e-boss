@@ -482,7 +482,7 @@ const FloatingChatbot = () => {
             minWidth: 0,
             padding: '10px 12px',
             border: '1px solid #d1d5db',
-            borderRadius: '10px',
+            borderRadius: '35px',
             outline: 'none',
             background: '#fff',
             color: '#1f2937'
@@ -499,8 +499,8 @@ const FloatingChatbot = () => {
                 : 'linear-gradient(135deg, #2563eb, #3b82f6)',
             color: 'white',
             border: 'none',
-            borderRadius: '10px',
-            padding: '0 15px',
+            borderRadius: '35px',
+            padding: '0 22px',
             cursor: !message.trim() || isLoading ? 'default' : 'pointer',
             fontWeight: 600
           }}
