@@ -286,7 +286,8 @@ const Messages = ({ standalone = true }) => {
                     <button
                       onClick={handleSend}
                       disabled={!replyText.trim()}
-                      style={{ borderRadius: "35px" }}\n                      className={`h-[35px] min-h-[35px] max-h-[35px] w-[35px] min-w-[35px] p-0 shrink-0 flex items-center justify-center transition-colors ${
+                      style={{ borderRadius: "35px" }}
+                      className={`h-[35px] min-h-[35px] max-h-[35px] w-[35px] min-w-[35px] p-0 shrink-0 flex items-center justify-center transition-colors ${
                         replyText.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                           : theme === 'dark' ? 'bg-gray-700 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
